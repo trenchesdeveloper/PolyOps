@@ -10,10 +10,24 @@
 //! exact predicate, so parity on degenerate inputs (collinear points,
 //! near-collinear) is by construction.
 //!
-//! **Sign convention.** `robust::orient2d` returns positive for a
-//! counter-clockwise triangle, negative for clockwise. Upstream's
-//! `signedArea` flips this — it returns `-1` for CCW, `+1` for CW.
-//! We mirror upstream exactly so callers see identical values.
+//! **Sign convention.** The two `orient2d` implementations we care
+//! about disagree on sign:
+//!
+//! - `robust-predicates` (npm, upstream's dep) computes
+//!   `(ay - cy)(bx - cx) - (ax - cx)(by - cy)`.
+//! - Rust's `robust` crate computes Shewchuk's classic
+//!   `(ax - cx)(by - cy) - (ay - cy)(bx - cx)` — the negation.
+//!
+//! Both are correct adaptive predicates; they just differ by a sign.
+//! Upstream's `signedArea` returns `-1` when its `orient2d > 0`. Since
+//! Rust's `orient2d` returns the opposite sign, we want `-1` when
+//! Rust's `orient2d < 0`. Net result: the trichotomy this function
+//! reports is identical to upstream's, even though the underlying
+//! predicate disagrees on sign. Downstream callers see no difference.
+//!
+//! Concretely: `-1` for counter-clockwise (left turn), `+1` for
+//! clockwise (right turn), `0` for collinear — matching upstream
+//! exactly.
 
 use robust::{orient2d, Coord};
 
@@ -22,17 +36,23 @@ use crate::types::Position;
 /// Sign of the signed area of the triangle `(p0, p1, p2)`.
 ///
 /// Returns `-1` when the three points form a counter-clockwise turn,
-/// `+1` when clockwise, `0` when collinear.
+/// `+1` when clockwise, `0` when collinear. Matches upstream's
+/// `signedArea` return values bit-for-bit.
 pub(crate) fn signed_area(p0: Position, p1: Position, p2: Position) -> i32 {
     let res = orient2d(
         Coord { x: p0[0], y: p0[1] },
         Coord { x: p1[0], y: p1[1] },
         Coord { x: p2[0], y: p2[1] },
     );
+    /*
+     * Sign flip relative to upstream because robust (Rust) and
+     * robust-predicates (npm) disagree on orient2d's sign — see
+     * module docs.
+     */
     if res > 0.0 {
-        -1
-    } else if res < 0.0 {
         1
+    } else if res < 0.0 {
+        -1
     } else {
         0
     }
