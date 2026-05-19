@@ -23,11 +23,11 @@
 #![deny(rust_2018_idioms)]
 #![warn(missing_docs)]
 
-/**********************************************************************
+/*
  * Module layout mirrors the upstream w8r/martinez `src/` directory so
  * cross-referencing during the port is mechanical. Order matches the
  * upstream import graph (leaves first).
- **********************************************************************/
+ */
 pub mod types;
 pub mod operation;
 
@@ -49,11 +49,11 @@ mod connect_edges;
 use crate::operation::Operation;
 pub use crate::types::{BBox, Geometry, MultiPolygon, Polygon, Position, Ring};
 
-/**********************************************************************
+/*
  * Public API — matches the four entrypoints exposed by upstream
  * `src/index.ts`. Signatures take owned `Geometry` for clarity at the
  * boundary; internally everything flows through `boolean_op`.
- **********************************************************************/
+ */
 
 /// Intersection of `subject` and `clipping`.
 pub fn intersection(subject: Geometry, clipping: Geometry) -> Option<MultiPolygon> {
@@ -75,16 +75,16 @@ pub fn xor(subject: Geometry, clipping: Geometry) -> Option<MultiPolygon> {
     boolean_op(subject, clipping, Operation::Xor)
 }
 
-/**********************************************************************
+/*
  * Top-level driver — mirrors upstream `src/index.ts::boolean`.
  * Currently a stub; will be filled in as the port progresses.
- **********************************************************************/
+ */
 fn boolean_op(
     _subject: Geometry,
     _clipping: Geometry,
     _operation: Operation,
 ) -> Option<MultiPolygon> {
-    /**
+    /*
      * TODO: trivial-case short-circuits (empty operand, disjoint bboxes),
      * fill_queue, subdivide_segments, connect_edges, contour → polygons.
      * See the upstream `src/index.ts` reference for the structure.

@@ -10,19 +10,19 @@ use napi::bindgen_prelude::*;
 use napi_derive::napi;
 use polyops::{Geometry, MultiPolygon, Polygon, Position};
 
-/**********************************************************************
+/*
  * GeoJSON-shaped boundary types — these are what TypeScript will see.
  * Positions are `Vec<f64>` (rather than `[f64; 2]`) to absorb 3D inputs
  * gracefully; we ignore anything beyond x/y at the boundary.
- **********************************************************************/
+ */
 type JsPosition = Vec<f64>;
 type JsRing = Vec<JsPosition>;
 type JsPolygon = Vec<JsRing>;
 type JsMultiPolygon = Vec<JsPolygon>;
 
-/**********************************************************************
+/*
  * Internal helpers — alphabetical.
- **********************************************************************/
+ */
 
 fn into_geometry(value: Either<JsPolygon, JsMultiPolygon>) -> Result<Geometry> {
     match value {
@@ -78,9 +78,9 @@ fn to_position(p: JsPosition) -> Result<Position> {
     Ok([p[0], p[1]])
 }
 
-/**********************************************************************
+/*
  * Public napi entry points — match the upstream JS API names.
- **********************************************************************/
+ */
 
 /// Intersection of `subject` and `clipping`.
 #[napi]

@@ -73,9 +73,9 @@ pub(crate) enum PolygonType {
     Clipping,
 }
 
-/**********************************************************************
+/*
  * Construction.
- **********************************************************************/
+ */
 impl SweepEvent {
     /// Build a fresh sweep event. All transient flags default to the
     /// same values upstream's constructor initializes
@@ -106,10 +106,10 @@ impl SweepEvent {
     }
 }
 
-/**********************************************************************
+/*
  * Pure geometric predicates — none of these need the arena. Callers
  * resolve `other_event -> other_point` first and pass it in.
- **********************************************************************/
+ */
 impl SweepEvent {
     /// Whether the segment `(self.point -> other_point)` lies strictly
     /// below the query point `p`.
@@ -150,9 +150,9 @@ impl SweepEvent {
     }
 }
 
-/**********************************************************************
+/*
  * Tests.
- **********************************************************************/
+ */
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -176,7 +176,7 @@ mod tests {
 
     #[test]
     fn is_below_when_query_is_above_segment() {
-        /**
+        /*
          * Segment from (0,0) to (4,4); the point (1,3) lies above the
          * segment. So `is_below(p)` is true — the segment is below the
          * point.
@@ -189,14 +189,14 @@ mod tests {
     #[test]
     fn is_below_false_when_query_is_below_segment() {
         let e = SweepEvent::new([0.0, 0.0], true, PolygonType::Subject, EdgeType::Normal);
-        /** Point (3,1) lies below the (0,0)→(4,4) line. */
+        /* Point (3,1) lies below the (0,0)→(4,4) line. */
         assert!(!e.is_below([4.0, 4.0], [3.0, 1.0]));
         assert!(e.is_above([4.0, 4.0], [3.0, 1.0]));
     }
 
     #[test]
     fn is_below_flips_when_event_is_right_endpoint() {
-        /**
+        /*
          * The right-endpoint branch uses the opposite cross-product
          * orientation, but the geometric meaning is the same: a query
          * point above the segment line yields `is_below = true`.

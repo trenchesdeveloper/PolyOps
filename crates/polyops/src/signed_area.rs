@@ -38,35 +38,35 @@ pub(crate) fn signed_area(p0: Position, p1: Position, p2: Position) -> i32 {
     }
 }
 
-/**********************************************************************
+/*
  * Tests — mirror upstream `test/signed_area.test.ts` 1:1, plus a few
  * extra cases for collinearity edge conditions.
- **********************************************************************/
+ */
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn negative_area() {
-        /** Counter-clockwise turn at (0,0) -> (0,1) -> (1,1). */
+        /* Counter-clockwise turn at (0,0) -> (0,1) -> (1,1). */
         assert_eq!(signed_area([0.0, 0.0], [0.0, 1.0], [1.0, 1.0]), -1);
     }
 
     #[test]
     fn positive_area() {
-        /** Clockwise turn at (0,1) -> (0,0) -> (1,0). */
+        /* Clockwise turn at (0,1) -> (0,0) -> (1,0). */
         assert_eq!(signed_area([0.0, 1.0], [0.0, 0.0], [1.0, 0.0]), 1);
     }
 
     #[test]
     fn collinear_zero_area() {
-        /** Three points on the line y = x. */
+        /* Three points on the line y = x. */
         assert_eq!(signed_area([0.0, 0.0], [1.0, 1.0], [2.0, 2.0]), 0);
     }
 
     #[test]
     fn point_on_segment_collinear() {
-        /**
+        /*
          * Upstream test: a third point that lies exactly on the segment
          * formed by the first two should report collinear (0), regardless
          * of which endpoint comes first.
@@ -77,7 +77,7 @@ mod tests {
 
     #[test]
     fn near_collinear_uses_robust_predicate() {
-        /**
+        /*
          * Three points that are collinear in exact arithmetic but
          * whose orientation a naive f64 cross product gets wrong. The
          * robust predicate must call this collinear. (If this test
@@ -92,7 +92,7 @@ mod tests {
 
     #[test]
     fn signed_area_is_antisymmetric_in_p0_p1_swap() {
-        /**
+        /*
          * Swapping the first two points negates the area sign. This is
          * a property of the underlying determinant and worth asserting
          * because a wrong sign-convention bug would show up here.

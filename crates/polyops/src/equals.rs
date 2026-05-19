@@ -22,10 +22,10 @@ pub(crate) fn equals(p1: Position, p2: Position) -> bool {
     p1[0] == p2[0] && p1[1] == p2[1]
 }
 
-/**********************************************************************
+/*
  * Tests — upstream has no dedicated equals.test.ts; these cover the
  * cases the algorithm's sweep relies on.
- **********************************************************************/
+ */
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -52,7 +52,7 @@ mod tests {
 
     #[test]
     fn positive_and_negative_zero_are_equal() {
-        /**
+        /*
          * IEEE 754: +0.0 == -0.0 is true. Upstream JS agrees
          * (`0 === -0` is true). The sweep treats them as the same
          * point, which is correct because they round-trip identically
@@ -64,7 +64,7 @@ mod tests {
 
     #[test]
     fn nan_never_equals_anything() {
-        /**
+        /*
          * IEEE 754: NaN != NaN. The algorithm shouldn't ever produce
          * NaN coordinates; if it does, this guarantees they don't
          * silently get merged.

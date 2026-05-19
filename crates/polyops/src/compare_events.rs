@@ -32,7 +32,7 @@ pub(crate) fn compare_events(arena: &[SweepEvent], i1: usize, i2: usize) -> Orde
     let p1 = e1.point;
     let p2 = e2.point;
 
-    /** 1. x-coordinate is the dominant key. */
+    /* 1. x-coordinate is the dominant key. */
     if p1[0] > p2[0] {
         return Ordering::Greater;
     }
@@ -40,7 +40,7 @@ pub(crate) fn compare_events(arena: &[SweepEvent], i1: usize, i2: usize) -> Orde
         return Ordering::Less;
     }
 
-    /** 2. Same x: lower y is processed first. */
+    /* 2. Same x: lower y is processed first. */
     if p1[1] != p2[1] {
         return if p1[1] > p2[1] {
             Ordering::Greater
@@ -52,11 +52,11 @@ pub(crate) fn compare_events(arena: &[SweepEvent], i1: usize, i2: usize) -> Orde
     special_cases(arena, e1, e2)
 }
 
-/**********************************************************************
+/*
  * Internal — same-point tiebreaking.
- **********************************************************************/
+ */
 fn special_cases(arena: &[SweepEvent], e1: &SweepEvent, e2: &SweepEvent) -> Ordering {
-    /**
+    /*
      * 3. Same coordinates but one is a left endpoint and the other a
      *    right endpoint. Upstream comment: "The right endpoint is
      *    processed first." In our return convention that means the
@@ -70,7 +70,7 @@ fn special_cases(arena: &[SweepEvent], e1: &SweepEvent, e2: &SweepEvent) -> Orde
         };
     }
 
-    /**
+    /*
      * 4. Same coords, both same side. Look at the other endpoint of
      *    each segment. If the three points aren't collinear, the
      *    segment that lies *below* the other goes first.
@@ -78,7 +78,7 @@ fn special_cases(arena: &[SweepEvent], e1: &SweepEvent, e2: &SweepEvent) -> Orde
     let o1 = arena[e1.other_event.expect("compare_events: e1 has no peer")].point;
     let o2 = arena[e2.other_event.expect("compare_events: e2 has no peer")].point;
     if signed_area(e1.point, o1, o2) != 0 {
-        /**
+        /*
          * Upstream: `(!e1.isBelow(e2.otherEvent.point)) ? 1 : -1`.
          * `is_below` is geometric: true means e1's segment is below
          * the query point. Negation: e1 is above ⇒ e1 sorts greater.
@@ -90,7 +90,7 @@ fn special_cases(arena: &[SweepEvent], e1: &SweepEvent, e2: &SweepEvent) -> Orde
         };
     }
 
-    /**
+    /*
      * 5. Collinear: subject sorts before clipping. Trace from
      *    upstream `(!e1.isSubject && e2.isSubject) ? 1 : -1`:
      *    - subject vs clipping: subject first (Less).
@@ -104,16 +104,16 @@ fn special_cases(arena: &[SweepEvent], e1: &SweepEvent, e2: &SweepEvent) -> Orde
     }
 }
 
-/**********************************************************************
+/*
  * Tests — mirror upstream `test/compare_events.test.ts` 1:1.
- **********************************************************************/
+ */
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::edge_type::EdgeType;
     use crate::sweep_event::PolygonType;
 
-    /**
+    /*
      * Test helper: append a left/right event pair representing the
      * directed segment from `left_pt` to `right_pt` of polygon
      * `polygon_type`, with `other_event` cross-linked. Returns the
@@ -139,7 +139,7 @@ mod tests {
         (left_idx, right_idx)
     }
 
-    /**
+    /*
      * Convenience: append a single event with no peer. Used when
      * upstream tests construct stub objects that the comparator never
      * dereferences `otherEvent` on.
@@ -179,7 +179,7 @@ mod tests {
 
     #[test]
     fn processes_right_endpoint_before_left_when_points_tie() {
-        /**
+        /*
          * Upstream test: when same point + different `left`, the
          * not-left event sorts first (Less). e1.left=true, e2.left=false,
          * so compare(e1, e2) = Greater (the left one sorts later).
@@ -193,7 +193,7 @@ mod tests {
 
     #[test]
     fn shared_start_not_collinear_processes_lower_edge_first() {
-        /**
+        /*
          * Upstream test "should process lower edge first": both events
          * start at (0,0); e1 ends at (1,1), e2 ends at (2,3). e1's
          * segment is below e2's. e1 sorts first (Less).
@@ -207,7 +207,7 @@ mod tests {
 
     #[test]
     fn collinear_subject_sorts_before_clipping() {
-        /**
+        /*
          * Upstream test (despite its misleading "should process
          * clipping before subject" name): when both segments are
          * collinear at the same point, *subject* is processed before

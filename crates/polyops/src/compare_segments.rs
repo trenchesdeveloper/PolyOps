@@ -31,7 +31,7 @@ pub(crate) fn compare_segments(arena: &[SweepEvent], i1: usize, i2: usize) -> Or
     let o1 = arena[e1.other_event.expect("compare_segments: e1 has no peer")].point;
     let o2 = arena[e2.other_event.expect("compare_segments: e2 has no peer")].point;
 
-    /**
+    /*
      * Segments are *not* collinear if either:
      *   - e2.point is off the line through (e1.point, o1), or
      *   - o2 is off the same line.
@@ -40,7 +40,7 @@ pub(crate) fn compare_segments(arena: &[SweepEvent], i1: usize, i2: usize) -> Or
         signed_area(e1.point, o1, e2.point) != 0 || signed_area(e1.point, o1, o2) != 0;
 
     if not_collinear {
-        /** Shared left endpoint: order by where each one's right point sits. */
+        /* Shared left endpoint: order by where each one's right point sits. */
         if equals(e1.point, e2.point) {
             return if e1.is_below(o1, o2) {
                 Ordering::Less
@@ -49,7 +49,7 @@ pub(crate) fn compare_segments(arena: &[SweepEvent], i1: usize, i2: usize) -> Or
             };
         }
 
-        /** Same x, different y at the left endpoint: lower y is below. */
+        /* Same x, different y at the left endpoint: lower y is below. */
         if e1.point[0] == e2.point[0] {
             return if e1.point[1] < e2.point[1] {
                 Ordering::Less
@@ -58,7 +58,7 @@ pub(crate) fn compare_segments(arena: &[SweepEvent], i1: usize, i2: usize) -> Or
             };
         }
 
-        /**
+        /*
          * Different left endpoints. Upstream's two branches both
          * resolve to the same geometric question — is e1 above or
          * below the sweep position of e2 (or vice versa). The
@@ -79,13 +79,13 @@ pub(crate) fn compare_segments(arena: &[SweepEvent], i1: usize, i2: usize) -> Or
         };
     }
 
-    /**
+    /*
      * Collinear branch.
      */
     if e1.is_subject() == e2.is_subject() {
-        /** Same polygon type. */
+        /* Same polygon type. */
         if e1.point == e2.point {
-            /** Same left point: tiebreak by right point, then contour id. */
+            /* Same left point: tiebreak by right point, then contour id. */
             if o1 == o2 {
                 return Ordering::Equal;
             }
@@ -97,9 +97,9 @@ pub(crate) fn compare_segments(arena: &[SweepEvent], i1: usize, i2: usize) -> Or
                 Ordering::Less
             };
         }
-        /** Different left points: fall through to compareEvents tiebreak. */
+        /* Different left points: fall through to compareEvents tiebreak. */
     } else {
-        /**
+        /*
          * Collinear segments from different polygons: subject sorts
          * below clipping.
          */
@@ -110,7 +110,7 @@ pub(crate) fn compare_segments(arena: &[SweepEvent], i1: usize, i2: usize) -> Or
         };
     }
 
-    /**
+    /*
      * Reached only for: collinear, same polygon type, different left
      * points. Tiebreak by event ordering.
      */
@@ -121,9 +121,9 @@ pub(crate) fn compare_segments(arena: &[SweepEvent], i1: usize, i2: usize) -> Or
     }
 }
 
-/**********************************************************************
+/*
  * Tests — mirror upstream `test/compare_segments.test.ts` 1:1.
- **********************************************************************/
+ */
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -152,7 +152,7 @@ mod tests {
 
     #[test]
     fn not_collinear_shared_left_point_orders_by_right_point() {
-        /**
+        /*
          * se1: (0,0) → (1,1); se2: (0,0) → (2,3). Shared left point;
          * se1 ends below se2 ⇒ se1 < se2.
          */
@@ -165,7 +165,7 @@ mod tests {
 
     #[test]
     fn not_collinear_same_x_different_y_orders_by_left_y() {
-        /**
+        /*
          * se1: (0,1) → (1,1); se2: (0,2) → (2,3). Same x at the left
          * endpoint, se1's y is lower ⇒ se1 < se2.
          */
@@ -178,7 +178,7 @@ mod tests {
 
     #[test]
     fn maintains_events_order_in_sweep_line() {
-        /**
+        /*
          * Upstream's "should maintain events order in sweep line"
          * test. Two pairs of segments with different left endpoints,
          * exercising the `compareEvents == 1` branch.
@@ -187,10 +187,10 @@ mod tests {
         let se1 = add_segment(&mut arena, [0.0, 1.0], [2.0, 1.0], PolygonType::Subject);
         let se2 = add_segment(&mut arena, [-1.0, 0.0], [2.0, 3.0], PolygonType::Subject);
 
-        /** compareEvents(se1, se2) compares left points (0,1) vs (-1,0) ⇒ se1 > se2. */
+        /* compareEvents(se1, se2) compares left points (0,1) vs (-1,0) ⇒ se1 > se2. */
         assert_eq!(compare_events(&arena, se1, se2), Ordering::Greater);
 
-        /** se2 should be ABOVE se1.point=(0,1)? Upstream says no. */
+        /* se2 should be ABOVE se1.point=(0,1)? Upstream says no. */
         let o2 = arena[arena[se2].other_event.unwrap()].point;
         assert!(!arena[se2].is_below(o2, arena[se1].point));
         assert!(arena[se2].is_above(o2, arena[se1].point));
@@ -201,7 +201,7 @@ mod tests {
 
     #[test]
     fn handles_when_first_point_is_below() {
-        /**
+        /*
          * Upstream "should handle when first point is below". se1
          * passes through se2.point on its way — by upstream's
          * is_below convention on collinear-at-query, returns false,
@@ -218,7 +218,7 @@ mod tests {
 
     #[test]
     fn collinear_subject_below_clipping() {
-        /**
+        /*
          * se1 subject, se2 clipping, both on y=1 ⇒ collinear,
          * different polygon types ⇒ subject sorts first (Less).
          */
@@ -231,7 +231,7 @@ mod tests {
 
     #[test]
     fn collinear_shared_left_point_tiebreaks_by_contour_id() {
-        /**
+        /*
          * Both clipping, both at (0,1), collinear on y=1, different
          * right points ⇒ tiebreak by `contour_id`.
          */
@@ -252,7 +252,7 @@ mod tests {
 
     #[test]
     fn collinear_same_polygon_different_left_points() {
-        /**
+        /*
          * Both subject, collinear on y=1, different left points
          * ((1,1) vs (2,1)) ⇒ falls through to compareEvents tiebreak.
          * compareEvents puts the smaller-x event first; here se1's x=1
@@ -270,7 +270,7 @@ mod tests {
 
     #[test]
     fn same_index_compares_equal() {
-        /** Pointer-equality short-circuit. */
+        /* Pointer-equality short-circuit. */
         let mut arena = Vec::new();
         let e1 = add_segment(&mut arena, [0.0, 0.0], [1.0, 1.0], PolygonType::Subject);
         assert_eq!(compare_segments(&arena, e1, e1), Ordering::Equal);

@@ -16,24 +16,24 @@ use std::path::{Path, PathBuf};
 use polyops::{difference, intersection, union, xor, Geometry, MultiPolygon};
 use serde::Deserialize;
 
-/**********************************************************************
+/*
  * Golden file shape — matches what parity/generate-goldens.ts emits.
- **********************************************************************/
+ */
 #[derive(Deserialize)]
 struct Golden {
-    /** GeoJSON `Polygon` (`[[[x,y],...]]`) or `MultiPolygon` (`[[[[x,y],...]]]`) coordinates. */
+    /* GeoJSON `Polygon` (`[[[x,y],...]]`) or `MultiPolygon` (`[[[[x,y],...]]]`) coordinates. */
     subject: serde_json::Value,
     clipping: serde_json::Value,
-    /** Upstream's return: a `MultiPolygon` or `null`. */
+    /* Upstream's return: a `MultiPolygon` or `null`. */
     expected: Option<MultiPolygon>,
 }
 
-/**********************************************************************
+/*
  * Internal helpers — alphabetical.
- **********************************************************************/
+ */
 
 fn coords_to_geometry(value: serde_json::Value) -> Geometry {
-    /**
+    /*
      * GeoJSON discriminates Polygon vs MultiPolygon by nesting depth.
      * A Polygon is [[[x,y], ...]]; a MultiPolygon is [[[[x,y], ...]]].
      */
@@ -96,7 +96,7 @@ fn run_parity(
     operation: &str,
     op: fn(Geometry, Geometry) -> Option<MultiPolygon>,
 ) {
-    /**
+    /*
      * Coordinate-equality tolerance. 1e-10 is tight enough to catch real
      * divergences but loose enough to absorb sum-of-products ordering
      * differences between JS and Rust floating-point.
@@ -145,10 +145,10 @@ fn run_parity(
     );
 }
 
-/**********************************************************************
+/*
  * Test entry points — one per operation. All `#[ignore]`d until the
  * algorithm is implemented; drop the attribute to gate CI on parity.
- **********************************************************************/
+ */
 
 #[test]
 #[ignore = "polyops::boolean_op not yet implemented"]
