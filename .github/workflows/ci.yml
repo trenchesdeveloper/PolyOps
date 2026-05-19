@@ -39,20 +39,20 @@ jobs:
       - run: cargo test --workspace
 
   # ---------------------------------------------------------------------
-  # Parity tests are gated by #[ignore] until the algorithm lands. This
-  # job clones the upstream repo, regenerates the goldens against
-  # martinez-polygon-clipping@0.8.1, and runs the ignored Rust tests.
-  # While the algorithm is stubbed it's expected to fail — set to
-  # continue-on-error until parity is the merge gate.
+  # Parity job — currently runs only the goldens-generation smoke test
+  # to confirm the harness still works against upstream's fixtures.
+  #
+  # The actual parity tests in `crates/polyops/tests/parity.rs` are
+  # `#[ignore]`d and will panic at `polyops::boolean_op`'s `todo!()`
+  # until the algorithm is implemented. Once `boolean_op` returns real
+  # output, uncomment the "Run parity tests" step below and drop the
+  # `#[ignore]` attributes per-operation as each goes green.
   # ---------------------------------------------------------------------
   parity:
-    name: parity vs martinez-polygon-clipping@0.8.1
+    name: parity harness (goldens only, pre-algorithm)
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -66,5 +66,5 @@ jobs:
         env:
           MARTINEZ_REPO: ${{ github.workspace }}/../martinez
         run: npm run generate
-      - name: Run parity tests
-        run: cargo test --workspace -- --include-ignored
+      # - name: Run parity tests
+      #   run: cargo test --workspace -- --include-ignored
