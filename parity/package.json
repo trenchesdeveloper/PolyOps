@@ -1,0 +1,19 @@
+{
+  "name": "polyops-parity",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "description": "Generates parity goldens by running martinez-polygon-clipping@0.8.1 against the upstream fixtures, into crates/polyops/tests/goldens/.",
+  "scripts": {
+    "generate": "tsx generate-goldens.ts",
+    "verify": "tsx verify-via-napi.ts"
+  },
+  "dependencies": {
+    "martinez-polygon-clipping": "0.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.4.0"
+  }
+}

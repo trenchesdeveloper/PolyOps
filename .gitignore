@@ -1,0 +1,28 @@
+# Rust
+/target
+**/*.rs.bk
+Cargo.lock.bak
+
+# napi-rs build artifacts
+*.node
+*.wasm
+crates/polyops-napi/index.js
+crates/polyops-napi/index.d.ts
+crates/polyops-napi/npm/
+
+# Node
+node_modules
+.npm
+.pnpm-store
+parity/dist
+parity/goldens-tmp
+
+# Editor / OS
+.idea
+.vscode
+*.swp
+.DS_Store
+
+# Coverage / profiling
+*.profraw
+/coverage

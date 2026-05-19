@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+jobs:
+  fmt-clippy:
+    name: fmt + clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo fmt --all -- --check
+      - run: cargo clippy --workspace --all-targets -- -D warnings
+
+  test:
+    name: test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo test --workspace
+
+  # ---------------------------------------------------------------------
+  # Parity tests are gated by #[ignore] until the algorithm lands. This
+  # job clones the upstream repo, regenerates the goldens against
+  # martinez-polygon-clipping@0.8.1, and runs the ignored Rust tests.
+  # While the algorithm is stubbed it's expected to fail — set to
+  # continue-on-error until parity is the merge gate.
+  # ---------------------------------------------------------------------
+  parity:
+    name: parity vs martinez-polygon-clipping@0.8.1
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Clone upstream w8r/martinez
+        run: git clone --depth 1 https://github.com/w8r/martinez ../martinez
+      - name: Install parity harness deps
+        working-directory: parity
+        run: npm install
+      - name: Generate goldens
+        working-directory: parity
+        env:
+          MARTINEZ_REPO: ${{ github.workspace }}/../martinez
+        run: npm run generate
+      - name: Run parity tests
+        run: cargo test --workspace -- --include-ignored

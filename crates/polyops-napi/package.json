@@ -1,0 +1,69 @@
+{
+  "name": "polyops",
+  "version": "0.0.1",
+  "description": "Fast Martinez-Rueda polygon Boolean operations (intersection, union, difference, xor) for Node.js — Rust under the hood. Drop-in replacement for martinez-polygon-clipping.",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "author": "Samuel Opeyemi <samuel@fasteditor.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/trenchesdeveloper/PolyOps.git",
+    "directory": "crates/polyops-napi"
+  },
+  "homepage": "https://github.com/trenchesdeveloper/PolyOps",
+  "bugs": {
+    "url": "https://github.com/trenchesdeveloper/PolyOps/issues"
+  },
+  "keywords": [
+    "polygon",
+    "clipping",
+    "boolean",
+    "intersection",
+    "union",
+    "xor",
+    "geometry",
+    "martinez",
+    "geojson",
+    "napi-rs",
+    "native"
+  ],
+  "napi": {
+    "name": "polyops",
+    "triples": {
+      "defaults": false,
+      "additional": [
+        "x86_64-apple-darwin",
+        "aarch64-apple-darwin",
+        "x86_64-unknown-linux-gnu",
+        "aarch64-unknown-linux-gnu",
+        "x86_64-unknown-linux-musl",
+        "aarch64-unknown-linux-musl",
+        "x86_64-pc-windows-msvc"
+      ]
+    }
+  },
+  "scripts": {
+    "artifacts": "napi artifacts",
+    "build": "napi build --platform --release",
+    "build:debug": "napi build --platform",
+    "prepublishOnly": "napi prepublish -t npm",
+    "test": "node --test __test__",
+    "universal": "napi universal",
+    "version": "napi version"
+  },
+  "devDependencies": {
+    "@napi-rs/cli": "^2.18.0"
+  },
+  "engines": {
+    "node": ">= 18"
+  },
+  "files": [
+    "index.d.ts",
+    "index.js"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  }
+}
