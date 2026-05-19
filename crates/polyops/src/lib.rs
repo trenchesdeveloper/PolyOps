@@ -39,6 +39,7 @@ mod contour;
 mod divide_segment;
 mod edge_type;
 mod equals;
+mod event_queue;
 mod fill_queue;
 mod possible_intersection;
 mod segment_intersection;
