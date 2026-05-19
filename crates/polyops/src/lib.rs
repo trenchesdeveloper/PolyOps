@@ -28,23 +28,23 @@
  * cross-referencing during the port is mechanical. Order matches the
  * upstream import graph (leaves first).
  */
-pub mod types;
 pub mod operation;
+pub mod types;
 
-mod signed_area;
-mod equals;
-mod edge_type;
-mod sweep_event;
 mod compare_events;
 mod compare_segments;
-mod segment_intersection;
-mod divide_segment;
-mod possible_intersection;
 mod compute_fields;
-mod fill_queue;
-mod subdivide_segments;
-mod contour;
 mod connect_edges;
+mod contour;
+mod divide_segment;
+mod edge_type;
+mod equals;
+mod fill_queue;
+mod possible_intersection;
+mod segment_intersection;
+mod signed_area;
+mod subdivide_segments;
+mod sweep_event;
 
 use crate::operation::Operation;
 pub use crate::types::{BBox, Geometry, MultiPolygon, Polygon, Position, Ring};

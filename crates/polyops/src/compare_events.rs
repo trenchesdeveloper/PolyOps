@@ -126,7 +126,12 @@ mod tests {
         polygon_type: PolygonType,
     ) -> (usize, usize) {
         let left_idx = arena.len();
-        arena.push(SweepEvent::new(left_pt, true, polygon_type, EdgeType::Normal));
+        arena.push(SweepEvent::new(
+            left_pt,
+            true,
+            polygon_type,
+            EdgeType::Normal,
+        ));
         let right_idx = arena.len();
         arena.push(SweepEvent::new(
             right_pt,
@@ -144,11 +149,7 @@ mod tests {
      * upstream tests construct stub objects that the comparator never
      * dereferences `otherEvent` on.
      */
-    fn add_bare_event(
-        arena: &mut Vec<SweepEvent>,
-        point: [f64; 2],
-        left: bool,
-    ) -> usize {
+    fn add_bare_event(arena: &mut Vec<SweepEvent>, point: [f64; 2], left: bool) -> usize {
         let idx = arena.len();
         arena.push(SweepEvent::new(
             point,

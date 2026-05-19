@@ -80,22 +80,21 @@ fn polygon_close(a: &[Vec<[f64; 2]>], b: &[Vec<[f64; 2]>], eps: f64) -> bool {
     if a.len() != b.len() {
         return false;
     }
-    a.iter().zip(b.iter()).all(|(ra, rb)| ring_close(ra, rb, eps))
+    a.iter()
+        .zip(b.iter())
+        .all(|(ra, rb)| ring_close(ra, rb, eps))
 }
 
 fn ring_close(a: &[[f64; 2]], b: &[[f64; 2]], eps: f64) -> bool {
     if a.len() != b.len() {
         return false;
     }
-    a.iter().zip(b.iter()).all(|(pa, pb)| {
-        (pa[0] - pb[0]).abs() <= eps && (pa[1] - pb[1]).abs() <= eps
-    })
+    a.iter()
+        .zip(b.iter())
+        .all(|(pa, pb)| (pa[0] - pb[0]).abs() <= eps && (pa[1] - pb[1]).abs() <= eps)
 }
 
-fn run_parity(
-    operation: &str,
-    op: fn(Geometry, Geometry) -> Option<MultiPolygon>,
-) {
+fn run_parity(operation: &str, op: fn(Geometry, Geometry) -> Option<MultiPolygon>) {
     /*
      * Coordinate-equality tolerance. 1e-10 is tight enough to catch real
      * divergences but loose enough to absorb sum-of-products ordering

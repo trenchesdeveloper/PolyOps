@@ -137,7 +137,12 @@ mod tests {
         polygon_type: PolygonType,
     ) -> usize {
         let left_idx = arena.len();
-        arena.push(SweepEvent::new(left_pt, true, polygon_type, EdgeType::Normal));
+        arena.push(SweepEvent::new(
+            left_pt,
+            true,
+            polygon_type,
+            EdgeType::Normal,
+        ));
         let right_idx = arena.len();
         arena.push(SweepEvent::new(
             right_pt,
