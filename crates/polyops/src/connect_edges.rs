@@ -20,7 +20,7 @@ use crate::contour::Contour;
 use crate::sweep_event::SweepEvent;
 
 /// Top-level driver. Returns the list of result contours.
-pub(crate) fn connect_edges(arena: &mut Vec<SweepEvent>, sorted_events: &[usize]) -> Vec<Contour> {
+pub(crate) fn connect_edges(arena: &mut [SweepEvent], sorted_events: &[usize]) -> Vec<Contour> {
     let result_events = order_events(arena, sorted_events);
 
     let mut processed: Vec<bool> = vec![false; result_events.len()];
@@ -79,7 +79,7 @@ pub(crate) fn connect_edges(arena: &mut Vec<SweepEvent>, sorted_events: &[usize]
 fn initialize_contour_from_context(
     arena: &[SweepEvent],
     event_idx: usize,
-    contours: &mut Vec<Contour>,
+    contours: &mut [Contour],
     contour_id: i32,
 ) -> Contour {
     let mut contour = Contour::new();
@@ -144,7 +144,7 @@ fn initialize_contour_from_context(
 /// contour currently being assembled. Helper to keep the main loop
 /// readable.
 fn mark_processed(
-    arena: &mut Vec<SweepEvent>,
+    arena: &mut [SweepEvent],
     result_events: &[usize],
     processed: &mut [bool],
     pos: usize,
@@ -200,7 +200,7 @@ fn next_pos(
 /// Filter `sorted_events` to events that contribute to the result,
 /// stable-sort them by `compare_events`, then set up `other_pos`
 /// so each event knows its peer's index *within result_events*.
-fn order_events(arena: &mut Vec<SweepEvent>, sorted_events: &[usize]) -> Vec<usize> {
+fn order_events(arena: &mut [SweepEvent], sorted_events: &[usize]) -> Vec<usize> {
     let mut result_events: Vec<usize> = Vec::new();
     for &idx in sorted_events {
         let event = &arena[idx];

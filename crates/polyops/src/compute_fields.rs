@@ -29,7 +29,7 @@ use crate::sweep_event::SweepEvent;
 /// `result_transition` on `arena[event_idx]` given the sweep-line
 /// predecessor `prev_idx` and the active `operation`.
 pub(crate) fn compute_fields(
-    arena: &mut Vec<SweepEvent>,
+    arena: &mut [SweepEvent],
     event_idx: usize,
     prev_idx: Option<usize>,
     operation: Operation,
