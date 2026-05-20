@@ -120,19 +120,9 @@ fn process_polygon(
         }
 
         let e1_idx = arena.len();
-        arena.push(SweepEvent::new(
-            s1,
-            false,
-            polygon_type,
-            EdgeType::Normal,
-        ));
+        arena.push(SweepEvent::new(s1, false, polygon_type, EdgeType::Normal));
         let e2_idx = arena.len();
-        arena.push(SweepEvent::new(
-            s2,
-            false,
-            polygon_type,
-            EdgeType::Normal,
-        ));
+        arena.push(SweepEvent::new(s2, false, polygon_type, EdgeType::Normal));
         arena[e1_idx].other_event = Some(e2_idx);
         arena[e2_idx].other_event = Some(e1_idx);
 
@@ -176,17 +166,17 @@ mod tests {
     use super::*;
 
     fn empty_bbox() -> BBox {
-        [f64::INFINITY, f64::INFINITY, f64::NEG_INFINITY, f64::NEG_INFINITY]
+        [
+            f64::INFINITY,
+            f64::INFINITY,
+            f64::NEG_INFINITY,
+            f64::NEG_INFINITY,
+        ]
     }
 
     /// One triangle polygon as a MultiPolygon.
     fn unit_triangle() -> MultiPolygon {
-        vec![vec![vec![
-            [0.0, 0.0],
-            [4.0, 0.0],
-            [2.0, 3.0],
-            [0.0, 0.0],
-        ]]]
+        vec![vec![vec![[0.0, 0.0], [4.0, 0.0], [2.0, 3.0], [0.0, 0.0]]]]
     }
 
     #[test]
