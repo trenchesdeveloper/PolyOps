@@ -124,11 +124,7 @@ mod tests {
     use crate::sweep_event::PolygonType;
     use crate::types::Position;
 
-    fn add_segment(
-        arena: &mut Vec<SweepEvent>,
-        left_pt: Position,
-        right_pt: Position,
-    ) -> usize {
+    fn add_segment(arena: &mut Vec<SweepEvent>, left_pt: Position, right_pt: Position) -> usize {
         let left_idx = arena.len();
         arena.push(SweepEvent::new(
             left_pt,

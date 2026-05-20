@@ -105,7 +105,11 @@ fn boolean_op(
     let clipping_mp = clipping.into_multi();
 
     if let Some(trivial) = trivial_operation(&subject_mp, &clipping_mp, operation) {
-        return if trivial.is_empty() { None } else { Some(trivial) };
+        return if trivial.is_empty() {
+            None
+        } else {
+            Some(trivial)
+        };
     }
 
     /*
@@ -139,7 +143,11 @@ fn boolean_op(
     );
 
     if let Some(trivial) = compare_bboxes(&subject_mp, &clipping_mp, &sbbox, &cbbox, operation) {
-        return if trivial.is_empty() { None } else { Some(trivial) };
+        return if trivial.is_empty() {
+            None
+        } else {
+            Some(trivial)
+        };
     }
 
     let sorted_events = subdivide_segments(&mut arena, &mut queue, sbbox, cbbox, operation);
@@ -205,10 +213,8 @@ fn compare_bboxes(
     cbbox: &BBox,
     operation: Operation,
 ) -> Option<MultiPolygon> {
-    let disjoint = sbbox[0] > cbbox[2]
-        || cbbox[0] > sbbox[2]
-        || sbbox[1] > cbbox[3]
-        || cbbox[1] > sbbox[3];
+    let disjoint =
+        sbbox[0] > cbbox[2] || cbbox[0] > sbbox[2] || sbbox[1] > cbbox[3] || cbbox[1] > sbbox[3];
     if !disjoint {
         return None;
     }

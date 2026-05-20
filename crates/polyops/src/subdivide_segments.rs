@@ -187,8 +187,13 @@ mod tests {
     fn empty_queue_returns_empty_sorted_events() {
         let mut arena = Vec::new();
         let mut q = EventQueue::new();
-        let result =
-            subdivide_segments(&mut arena, &mut q, empty_bbox(), empty_bbox(), Operation::Union);
+        let result = subdivide_segments(
+            &mut arena,
+            &mut q,
+            empty_bbox(),
+            empty_bbox(),
+            Operation::Union,
+        );
         assert!(result.is_empty());
     }
 
@@ -271,8 +276,7 @@ mod tests {
             &mut cbb,
             Operation::Intersection,
         );
-        let result =
-            subdivide_segments(&mut arena, &mut q, sbb, cbb, Operation::Intersection);
+        let result = subdivide_segments(&mut arena, &mut q, sbb, cbb, Operation::Intersection);
         /* Early break ⇒ result is shorter than total event count. */
         assert!(result.len() < arena.len());
     }

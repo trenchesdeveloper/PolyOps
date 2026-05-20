@@ -285,24 +285,26 @@ mod tests {
             let e = add_segment(&mut arena, [0.0, 0.0], [1.0, 1.0], PolygonType::Subject);
             arena[e].edge_type = EdgeType::SameTransition;
             compute_fields(&mut arena, e, None, op);
-            assert_ne!(arena[e].result_transition, 0, "{op:?} should include SameTransition");
+            assert_ne!(
+                arena[e].result_transition, 0,
+                "{op:?} should include SameTransition"
+            );
         }
         for op in [Operation::Difference, Operation::Xor] {
             let mut arena = Vec::new();
             let e = add_segment(&mut arena, [0.0, 0.0], [1.0, 1.0], PolygonType::Subject);
             arena[e].edge_type = EdgeType::SameTransition;
             compute_fields(&mut arena, e, None, op);
-            assert_eq!(arena[e].result_transition, 0, "{op:?} should exclude SameTransition");
+            assert_eq!(
+                arena[e].result_transition, 0,
+                "{op:?} should exclude SameTransition"
+            );
         }
     }
 
     #[test]
     fn different_transition_in_result_for_difference_only() {
-        for op in [
-            Operation::Intersection,
-            Operation::Union,
-            Operation::Xor,
-        ] {
+        for op in [Operation::Intersection, Operation::Union, Operation::Xor] {
             let mut arena = Vec::new();
             let e = add_segment(&mut arena, [0.0, 0.0], [1.0, 1.0], PolygonType::Subject);
             arena[e].edge_type = EdgeType::DifferentTransition;
