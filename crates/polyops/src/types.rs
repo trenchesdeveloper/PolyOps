@@ -29,10 +29,6 @@ pub enum Geometry {
 
 impl Geometry {
     /// Normalize either variant to a `MultiPolygon` for internal processing.
-    ///
-    /// Will be wired up by `boolean_op` once the algorithm is in place;
-    /// allow(dead_code) until then.
-    #[allow(dead_code)]
     pub(crate) fn into_multi(self) -> MultiPolygon {
         match self {
             Geometry::Polygon(p) => vec![p],
