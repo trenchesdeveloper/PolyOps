@@ -46,6 +46,7 @@ mod segment_intersection;
 mod signed_area;
 mod subdivide_segments;
 mod sweep_event;
+mod sweep_line;
 
 use crate::operation::Operation;
 pub use crate::types::{BBox, Geometry, MultiPolygon, Polygon, Position, Ring};
