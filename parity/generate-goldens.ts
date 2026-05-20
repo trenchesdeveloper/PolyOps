@@ -131,7 +131,17 @@ function generateFromGenericTestCases(): number {
 			usedNames.add(`${op.dir}/${name}`);
 
 			const result = op.run(subject, clipping);
-			writeGolden(op.dir, name, subject, clipping, result ?? null);
+			/*
+			 * diff_ba computes martinez.diff(clipping, subject) — the
+			 * arguments are swapped. Save the golden with the swapped
+			 * inputs so that the consumer (Rust polyops::difference)
+			 * sees the same inputs that produced the result.
+			 */
+			if (opName === 'diff_ba') {
+				writeGolden(op.dir, name, clipping, subject, result ?? null);
+			} else {
+				writeGolden(op.dir, name, subject, clipping, result ?? null);
+			}
 			count++;
 		}
 	}

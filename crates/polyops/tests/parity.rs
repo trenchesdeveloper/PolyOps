@@ -6,9 +6,9 @@
 //! subject + clipping coordinate arrays plus the expected
 //! `MultiPolygon` (or `null`) that upstream returned.
 //!
-//! These tests are `#[ignore]`d by default because the algorithm is not
-//! yet implemented. Once `polyops::boolean_op` returns real output, drop
-//! the `#[ignore]` so CI gates on parity.
+//! As of the initial parity lock, all four `parity_*` tests run on
+//! every `cargo test` and gate CI. Drop them at your peril — they're
+//! the proof that polyops behaves like upstream.
 
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -150,25 +150,21 @@ fn run_parity(operation: &str, op: fn(Geometry, Geometry) -> Option<MultiPolygon
  */
 
 #[test]
-#[ignore = "polyops::boolean_op not yet implemented"]
 fn parity_intersection() {
     run_parity("intersection", intersection);
 }
 
 #[test]
-#[ignore = "polyops::boolean_op not yet implemented"]
 fn parity_union() {
     run_parity("union", union);
 }
 
 #[test]
-#[ignore = "polyops::boolean_op not yet implemented"]
 fn parity_difference() {
     run_parity("difference", difference);
 }
 
 #[test]
-#[ignore = "polyops::boolean_op not yet implemented"]
 fn parity_xor() {
     run_parity("xor", xor);
 }

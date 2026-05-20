@@ -100,11 +100,22 @@ fn boolean_op(subject: Geometry, clipping: Geometry, operation: Operation) -> Op
     let subject_mp = subject.into_multi();
     let clipping_mp = clipping.into_multi();
 
-    if let Some(trivial) = trivial_operation(&subject_mp, &clipping_mp, operation) {
-        return if trivial.is_empty() {
-            None
-        } else {
-            Some(trivial)
+    /*
+     * Trivial-operation shortcut. If either operand is empty, the
+     * result is known without running the sweep. Upstream distinguishes
+     * two flavors of "empty": the EMPTY sentinel for intersection
+     * (returns null) and an actual empty MultiPolygon for difference
+     * (returns []) — both encoded here as None vs Some([]) respectively.
+     */
+    if subject_mp.is_empty() || clipping_mp.is_empty() {
+        return match operation {
+            Operation::Intersection => None,
+            Operation::Difference => Some(subject_mp),
+            Operation::Union | Operation::Xor => Some(if subject_mp.is_empty() {
+                clipping_mp
+            } else {
+                subject_mp
+            }),
         };
     }
 
@@ -138,11 +149,22 @@ fn boolean_op(subject: Geometry, clipping: Geometry, operation: Operation) -> Op
         operation,
     );
 
-    if let Some(trivial) = compare_bboxes(&subject_mp, &clipping_mp, &sbbox, &cbbox, operation) {
-        return if trivial.is_empty() {
-            None
-        } else {
-            Some(trivial)
+    /*
+     * Bbox-disjoint shortcut. Same null-vs-[] distinction as above:
+     * disjoint intersection returns null, disjoint difference returns
+     * the subject, disjoint union/xor returns the concatenation.
+     */
+    let disjoint =
+        sbbox[0] > cbbox[2] || cbbox[0] > sbbox[2] || sbbox[1] > cbbox[3] || cbbox[1] > sbbox[3];
+    if disjoint {
+        return match operation {
+            Operation::Intersection => None,
+            Operation::Difference => Some(subject_mp),
+            Operation::Union | Operation::Xor => {
+                let mut combined = subject_mp;
+                combined.extend(clipping_mp);
+                Some(combined)
+            }
         };
     }
 
@@ -151,7 +173,9 @@ fn boolean_op(subject: Geometry, clipping: Geometry, operation: Operation) -> Op
 
     /*
      * Assemble: for each exterior contour, emit a polygon with the
-     * exterior as its first ring followed by its holes.
+     * exterior as its first ring followed by its holes. Sweep-produced
+     * empty result returns Some([]) — only the trivial/disjoint
+     * intersection shortcuts return None.
      */
     let mut polygons: MultiPolygon = Vec::new();
     for contour in &contours {
@@ -166,61 +190,5 @@ fn boolean_op(subject: Geometry, clipping: Geometry, operation: Operation) -> Op
         polygons.push(rings);
     }
 
-    if polygons.is_empty() {
-        None
-    } else {
-        Some(polygons)
-    }
-}
-
-/*
- * Trivial-operation shortcut. If either operand is empty, the result
- * is known without running the sweep.
- */
-fn trivial_operation(
-    subject: &MultiPolygon,
-    clipping: &MultiPolygon,
-    operation: Operation,
-) -> Option<MultiPolygon> {
-    if !subject.is_empty() && !clipping.is_empty() {
-        return None;
-    }
-    Some(match operation {
-        Operation::Intersection => Vec::new(),
-        Operation::Difference => subject.clone(),
-        Operation::Union | Operation::Xor => {
-            if subject.is_empty() {
-                clipping.clone()
-            } else {
-                subject.clone()
-            }
-        }
-    })
-}
-
-/*
- * Bbox-disjoint shortcut. If subject and clipping don't overlap on
- * bounding boxes, the result is known without running the sweep.
- */
-fn compare_bboxes(
-    subject: &MultiPolygon,
-    clipping: &MultiPolygon,
-    sbbox: &BBox,
-    cbbox: &BBox,
-    operation: Operation,
-) -> Option<MultiPolygon> {
-    let disjoint =
-        sbbox[0] > cbbox[2] || cbbox[0] > sbbox[2] || sbbox[1] > cbbox[3] || cbbox[1] > sbbox[3];
-    if !disjoint {
-        return None;
-    }
-    Some(match operation {
-        Operation::Intersection => Vec::new(),
-        Operation::Difference => subject.clone(),
-        Operation::Union | Operation::Xor => {
-            let mut combined = subject.clone();
-            combined.extend(clipping.iter().cloned());
-            combined
-        }
-    })
+    Some(polygons)
 }
