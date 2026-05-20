@@ -276,7 +276,12 @@ mod tests {
         /* Events come in pairs (i, i+1) per edge. Each pair has exactly one left. */
         for pair in (0..arena.len()).step_by(2) {
             let left_count = (arena[pair].left as u8) + (arena[pair + 1].left as u8);
-            assert_eq!(left_count, 1, "edge events at indices {pair}, {} should be one left + one right", pair + 1);
+            assert_eq!(
+                left_count,
+                1,
+                "edge events at indices {pair}, {} should be one left + one right",
+                pair + 1
+            );
             /* And other_event cross-links. */
             assert_eq!(arena[pair].other_event, Some(pair + 1));
             assert_eq!(arena[pair + 1].other_event, Some(pair));
@@ -293,13 +298,7 @@ mod tests {
             [0.0, 10.0],
             [0.0, 0.0],
         ];
-        let hole = vec![
-            [2.0, 2.0],
-            [4.0, 2.0],
-            [4.0, 4.0],
-            [2.0, 4.0],
-            [2.0, 2.0],
-        ];
+        let hole = vec![[2.0, 2.0], [4.0, 2.0], [4.0, 4.0], [2.0, 4.0], [2.0, 2.0]];
         let poly: MultiPolygon = vec![vec![exterior, hole]];
 
         let mut arena = Vec::new();
@@ -346,11 +345,17 @@ mod tests {
 
         /* Subject events: indices 0..6, all is_exterior_ring=true. */
         for ev in arena.iter().take(6) {
-            assert!(ev.is_exterior_ring, "subject events should keep exterior flag");
+            assert!(
+                ev.is_exterior_ring,
+                "subject events should keep exterior flag"
+            );
         }
         /* Clipping events: indices 6..12, all is_exterior_ring=false under DIFFERENCE. */
         for ev in arena.iter().skip(6) {
-            assert!(!ev.is_exterior_ring, "clipping events should be flipped under DIFFERENCE");
+            assert!(
+                !ev.is_exterior_ring,
+                "clipping events should be flipped under DIFFERENCE"
+            );
         }
     }
 

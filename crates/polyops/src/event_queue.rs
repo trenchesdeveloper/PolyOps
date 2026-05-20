@@ -72,14 +72,10 @@ impl EventQueue {
             let l = 2 * i + 1;
             let r = 2 * i + 2;
             let mut smallest = i;
-            if l < n
-                && compare_events(arena, self.heap[l], self.heap[smallest]) == Ordering::Less
-            {
+            if l < n && compare_events(arena, self.heap[l], self.heap[smallest]) == Ordering::Less {
                 smallest = l;
             }
-            if r < n
-                && compare_events(arena, self.heap[r], self.heap[smallest]) == Ordering::Less
-            {
+            if r < n && compare_events(arena, self.heap[r], self.heap[smallest]) == Ordering::Less {
                 smallest = r;
             }
             if smallest == i {

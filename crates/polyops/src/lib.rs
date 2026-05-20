@@ -96,11 +96,7 @@ pub fn xor(subject: Geometry, clipping: Geometry) -> Option<MultiPolygon> {
  *   6. Stitch result events into contours via connect_edges.
  *   7. Assemble exterior rings + their holes into output polygons.
  */
-fn boolean_op(
-    subject: Geometry,
-    clipping: Geometry,
-    operation: Operation,
-) -> Option<MultiPolygon> {
+fn boolean_op(subject: Geometry, clipping: Geometry, operation: Operation) -> Option<MultiPolygon> {
     let subject_mp = subject.into_multi();
     let clipping_mp = clipping.into_multi();
 

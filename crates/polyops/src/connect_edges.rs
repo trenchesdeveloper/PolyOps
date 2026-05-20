@@ -204,11 +204,9 @@ fn order_events(arena: &mut Vec<SweepEvent>, sorted_events: &[usize]) -> Vec<usi
     let mut result_events: Vec<usize> = Vec::new();
     for &idx in sorted_events {
         let event = &arena[idx];
-        let other_idx = event
-            .other_event
-            .expect("order_events: event has no peer");
-        let include = (event.left && event.in_result())
-            || (!event.left && arena[other_idx].in_result());
+        let other_idx = event.other_event.expect("order_events: event has no peer");
+        let include =
+            (event.left && event.in_result()) || (!event.left && arena[other_idx].in_result());
         if include {
             result_events.push(idx);
         }
@@ -224,8 +222,7 @@ fn order_events(arena: &mut Vec<SweepEvent>, sorted_events: &[usize]) -> Vec<usi
     while !sorted {
         sorted = true;
         for i in 0..result_events.len().saturating_sub(1) {
-            if compare_events(arena, result_events[i], result_events[i + 1]) == Ordering::Greater
-            {
+            if compare_events(arena, result_events[i], result_events[i + 1]) == Ordering::Greater {
                 result_events.swap(i, i + 1);
                 sorted = false;
             }
