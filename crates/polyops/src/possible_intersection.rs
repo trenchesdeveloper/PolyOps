@@ -30,6 +30,8 @@ use crate::equals::equals;
 use crate::event_queue::EventQueue;
 use crate::segment_intersection::{intersection, SegmentIntersection};
 use crate::sweep_event::SweepEvent;
+//pub mod sweep_event;
+
 
 /// Test the geometric relationship between two sweep-line neighbors
 /// `se1_idx` and `se2_idx` and dispatch any subdivisions or
