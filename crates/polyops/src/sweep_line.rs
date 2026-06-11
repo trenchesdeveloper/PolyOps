@@ -23,16 +23,6 @@ pub(crate) struct SweepLine {
     events: Vec<usize>,
 }
 
-impl Default for SweepLine {
-    fn default() -> Self {
-        Self::new()
-    }
-
-    fn modifyEvents(&mut self, arena: &mut Vec<SweepEvent>, ) {
-        
-    }
-}
-
 impl SweepLine {
     pub(crate) fn new() -> Self {
         Self { events: Vec::new() }

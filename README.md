@@ -7,11 +7,9 @@ PolyOps is a faithful port of [`martinez-polygon-clipping`](https://github.com/w
 into idiomatic Rust, with a [`napi-rs`](https://napi.rs) wrapper so the same
 engine can be consumed from Node.js without giving up native performance.
 
-> **Status:** pre-alpha. The scaffold is in place; the algorithm is not yet
-> implemented. See [`PLAN.md`](PLAN.md) for the full implementation plan
-> (milestones, file-by-file porting order, decision log, open questions)
-> and [`crates/polyops/src/lib.rs`](crates/polyops/src/lib.rs) for the
-> public API surface.
+> **Status:** pre-alpha. The Martinez-Rueda algorithm has been ported and is
+> covered by parity tests against upstream fixtures. The public API may still
+> change before a stable release.
 
 ## Operations
 

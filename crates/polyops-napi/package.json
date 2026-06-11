@@ -47,8 +47,9 @@
     "artifacts": "napi artifacts",
     "build": "napi build --platform --release",
     "build:debug": "napi build --platform",
+    "prepack": "npm run build",
     "prepublishOnly": "napi prepublish -t npm",
-    "test": "node --test __test__",
+    "test": "node --test __test__/*.test.mjs",
     "universal": "napi universal",
     "version": "napi version"
   },
@@ -60,7 +61,8 @@
   },
   "files": [
     "index.d.ts",
-    "index.js"
+    "index.js",
+    "*.node"
   ],
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
