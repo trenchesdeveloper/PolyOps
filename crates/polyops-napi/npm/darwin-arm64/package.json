@@ -1,0 +1,46 @@
+{
+  "name": "polyops-darwin-arm64",
+  "version": "0.0.2",
+  "os": [
+    "darwin"
+  ],
+  "cpu": [
+    "arm64"
+  ],
+  "main": "polyops.darwin-arm64.node",
+  "files": [
+    "polyops.darwin-arm64.node"
+  ],
+  "description": "Fast Martinez-Rueda polygon Boolean operations (intersection, union, difference, xor) for Node.js — Rust under the hood. Drop-in replacement for martinez-polygon-clipping.",
+  "keywords": [
+    "polygon",
+    "clipping",
+    "boolean",
+    "intersection",
+    "union",
+    "xor",
+    "geometry",
+    "martinez",
+    "geojson",
+    "napi-rs",
+    "native"
+  ],
+  "author": "Samuel Opeyemi <samuel@fasteditor.com>",
+  "homepage": "https://github.com/trenchesdeveloper/PolyOps",
+  "license": "MIT",
+  "engines": {
+    "node": ">= 18"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/trenchesdeveloper/PolyOps.git",
+    "directory": "crates/polyops-napi"
+  },
+  "bugs": {
+    "url": "https://github.com/trenchesdeveloper/PolyOps/issues"
+  }
+}

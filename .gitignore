@@ -5,11 +5,15 @@
 Cargo.lock.bak
 
 # napi-rs build artifacts
+# Generated native binaries stay out of git. This *.node rule also
+# covers the binaries that land inside crates/polyops-napi/npm/<platform>/
+# during a release build — only the metadata in those dirs is tracked.
 *.node
 *.wasm
 crates/polyops-napi/index.js
 crates/polyops-napi/index.d.ts
-crates/polyops-napi/npm/
+# crates/polyops-napi/npm/ is intentionally tracked (per-platform
+# package.json metadata is committed; *.node inside it stays ignored).
 
 # Node
 node_modules
