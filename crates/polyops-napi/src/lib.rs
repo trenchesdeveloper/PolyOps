@@ -83,7 +83,10 @@ fn to_position(p: JsPosition) -> Result<Position> {
  */
 
 /// Intersection of `subject` and `clipping`.
-#[napi]
+#[napi(
+    ts_args_type = "subject: number[][][] | number[][][][], clipping: number[][][] | number[][][][]",
+    ts_return_type = "number[][][][] | null"
+)]
 pub fn intersection(
     subject: Either<JsPolygon, JsMultiPolygon>,
     clipping: Either<JsPolygon, JsMultiPolygon>,
@@ -92,7 +95,10 @@ pub fn intersection(
 }
 
 /// Union of `subject` and `clipping`.
-#[napi]
+#[napi(
+    ts_args_type = "subject: number[][][] | number[][][][], clipping: number[][][] | number[][][][]",
+    ts_return_type = "number[][][][] | null"
+)]
 pub fn union(
     subject: Either<JsPolygon, JsMultiPolygon>,
     clipping: Either<JsPolygon, JsMultiPolygon>,
@@ -101,7 +107,10 @@ pub fn union(
 }
 
 /// `subject` minus `clipping`.
-#[napi]
+#[napi(
+    ts_args_type = "subject: number[][][] | number[][][][], clipping: number[][][] | number[][][][]",
+    ts_return_type = "number[][][][] | null"
+)]
 pub fn diff(
     subject: Either<JsPolygon, JsMultiPolygon>,
     clipping: Either<JsPolygon, JsMultiPolygon>,
@@ -110,7 +119,10 @@ pub fn diff(
 }
 
 /// Symmetric difference of `subject` and `clipping`.
-#[napi]
+#[napi(
+    ts_args_type = "subject: number[][][] | number[][][][], clipping: number[][][] | number[][][][]",
+    ts_return_type = "number[][][][] | null"
+)]
 pub fn xor(
     subject: Either<JsPolygon, JsMultiPolygon>,
     clipping: Either<JsPolygon, JsMultiPolygon>,

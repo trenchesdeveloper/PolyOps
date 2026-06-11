@@ -22,6 +22,7 @@ use std::cmp::Ordering;
 
 use crate::compare_events::compare_events;
 use crate::edge_type::EdgeType;
+#[cfg(debug_assertions)]
 use crate::equals::equals;
 use crate::sweep_event::SweepEvent;
 use crate::types::Position;
