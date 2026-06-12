@@ -7,9 +7,12 @@ PolyOps is a faithful port of [`martinez-polygon-clipping`](https://github.com/w
 into idiomatic Rust, with a [`napi-rs`](https://napi.rs) wrapper so the same
 engine can be consumed from Node.js without giving up native performance.
 
-> **Status:** pre-alpha. The Martinez-Rueda algorithm has been ported and is
-> covered by parity tests against upstream fixtures. The public API may still
-> change before a stable release.
+> **Status:** published. `polyops` 0.0.4 is on
+> [crates.io](https://crates.io/crates/polyops) and
+> [npm](https://www.npmjs.com/package/polyops) (prebuilt binaries for macOS,
+> Linux gnu/musl, and Windows), with full behavioral parity against
+> `martinez-polygon-clipping@0.8.1` over the upstream fixture corpus. The API
+> is still `0.0.x` and may change before `0.1`.
 
 ## Operations
 
@@ -29,6 +32,14 @@ arrays, matching the upstream JS API.
 |------------|-------------------|-------------------------|
 | crates.io  | `polyops`         | `crates/polyops`        |
 | npm        | `polyops`         | `crates/polyops-napi`   |
+
+## Performance
+
+On the upstream `union` benchmarks, `polyops` (Rust, single-thread) runs
+**~1.8×–2.9× faster** than `martinez-polygon-clipping@0.8.1`. Through the
+Node binding the win is **~1.35×–1.6×** on medium/large inputs; the N-API
+marshalling adds overhead that can erase it for very small ops. Full numbers,
+methodology, and the optimization backlog are in [`BENCHMARKS.md`](BENCHMARKS.md).
 
 ## Layout
 
