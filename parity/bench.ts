@@ -32,7 +32,10 @@ if (!existsSync(NAPI)) {
 	process.exit(1);
 }
 
-const polyops = (await import(NAPI)) as { union: (a: unknown, b: unknown) => unknown };
+const polyops = (await import(NAPI)) as {
+	union: (a: unknown, b: unknown) => unknown;
+	intersection: (a: unknown, b: unknown) => unknown;
+};
 const M = martinez as any;
 
 const load = (name: string): any => JSON.parse(readFileSync(resolve(FIXTURES, name), 'utf-8'));
@@ -108,6 +111,38 @@ for (const s of scenarios) {
 	});
 }
 console.table(rows);
+
+/*
+ * The real process-photo workload: a single `intersection` captured from
+ * test39's clip-path flatten (PERFORMANCE_PLAN §4). Tiny — one call,
+ * 5 x 95 vertices.
+ */
+const cpf = JSON.parse(readFileSync(resolve(FIXTURES, 'clip_path_flatten.json'), 'utf-8'));
+const step = cpf.steps[0];
+{
+	const bench = new Bench({ time: 1500 });
+	bench.add('martinez', () => {
+		M.intersection(step.subject, step.clipping);
+	});
+	bench.add('polyops', () => {
+		polyops.intersection(step.subject, step.clipping);
+	});
+	await bench.run();
+	const hz = (name: string): number =>
+		bench.tasks.find((t) => t.name === name)!.result!.throughput.mean;
+	const mHz = hz('martinez');
+	const pHz = hz('polyops');
+	console.log('\nclip_path_flatten (real process-photo test39 input — single intersection, 5×95 verts):');
+	console.table([
+		{
+			scenario: 'clip_path_flatten',
+			'martinez (ops/s)': Math.round(mHz).toLocaleString(),
+			'polyops-napi (ops/s)': Math.round(pHz).toLocaleString(),
+			speedup: `${(pHz / mHz).toFixed(2)}×`,
+		},
+	]);
+}
+
 console.log(
 	'\nNote: compare polyops-napi ops/s against the pure-Rust criterion numbers' +
 		'\n(`cargo bench -p polyops`) to gauge the napi marshalling overhead.',

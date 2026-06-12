@@ -1,7 +1,9 @@
 # Benchmarks
 
-Baseline for Milestone 7 (PLAN.md §11). Three `union` workloads mirroring
-upstream `bench/martinez.bench.ts`, run three ways:
+Baseline for Milestone 7 (PLAN.md §11). Four workloads — the three `union`
+workloads from upstream `bench/martinez.bench.ts`, plus the **real
+`clip_path_flatten` intersection captured from process-photo** (test39) —
+run three ways:
 
 1. **martinez** — `martinez-polygon-clipping@0.8.1` (Node, in-process JS)
 2. **polyops (Rust)** — the pure-Rust crate via `criterion` (`cargo bench`)
@@ -22,8 +24,10 @@ single-thread · release builds. Measured 2026-06-12.
 | `hole_hole`   | tiny, degenerate    | 68,150 | **125,219** (1.84×) | 45,887 (0.67×) |
 | `states_clip` | ~92 KB, multi-poly  | 419    | **940** (2.24×)     | 567 (1.35×)    |
 | `asia_union`  | ~1.2 MB subject     | 20.6   | **60** (2.91×)      | 33.1 (1.61×)   |
+| `clip_path_flatten` | **real test39** (1 intersection, 5×95 verts) | 21,350 | **52,012** (2.44×) | 13,840 (0.65×) |
 
-Ratios in parentheses are **vs martinez** (>1 = faster than martinez).
+Ratios in parentheses are **vs martinez** (>1 = faster than martinez). All
+rows are `union` except `clip_path_flatten`, which is `intersection`.
 
 ## Reading the numbers
 
@@ -46,14 +50,36 @@ Ratios in parentheses are **vs martinez** (>1 = faster than martinez).
   biggest optimization lever is **reducing marshalling** (see below), not
   the algorithm.
 
-## What this means for process-photo
+## What this means for process-photo — the headline finding
 
-The decisive workload — `clip_path_flatten`, the real SVG clip-path
-flattening from `process-photo` — is **not yet measured** (PERFORMANCE_PLAN
-§4; needs the `process-photo` repo to extract the input sequence). Whether
-the napi win holds there depends on the polygon sizes and how many ops run
-per call: large clip paths favor polyops; many tiny ops in a tight loop are
-where the boundary cost bites. Measure before integrating (PLAN.md §12).
+We captured the **actual** workload by instrumenting `martinez.intersection`
+during a real `test39` run in the devcontainer (the FE-1866 case PLAN §11
+picked specifically *because* it has 3-level nested clip-paths). The result:
+
+- The entire clip-path flatten is **one `intersection` call**, of a
+  **5-vertex** polygon against a **95-vertex** one. ~52 µs in martinez.
+- Through the napi binding, polyops is **slower** (0.65×) — same as
+  `hole_hole`: the boundary cost (~62 µs here) dwarfs the ~19 µs of compute.
+- That single ~52 µs call lives inside a **~12-second** pipeline (EPS
+  decode, vectorization ×3, S3 I/O). It is **~0.0004% of end-to-end time** —
+  a rounding error.
+
+**Conclusion:** for process-photo as it runs today, the polygon-Boolean
+phase is **not a bottleneck**, and swapping martinez → polyops would make
+that phase *slightly slower* (via napi) while changing total runtime by
+nothing measurable. PLAN.md §2's premise — that process-photo "spends
+meaningful CPU time on polygon Boolean operations" — **does not hold for
+this workload.** A speed-motivated integration (M9) is not justified by
+these numbers; reasons to adopt polyops would have to be non-performance
+(parity, a maintained Rust port, dropping the JS dep).
+
+Caveats: this is one image. Other production inputs could carry heavier
+clip-path geometry — but test39 was the deliberately-chosen stress case, so
+if even it is one tiny op, a Boolean-bound workload is unlikely. Capture a
+few more representative images before drawing a final line. And note the
+engine itself is genuinely faster (1.8×–2.9× in pure Rust) — the gain is
+real, it's just (a) eaten by the napi boundary for small ops and (b) aimed
+at a phase that isn't the bottleneck here.
 
 ## Optimization backlog (not yet done)
 

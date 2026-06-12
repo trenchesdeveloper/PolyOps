@@ -20,7 +20,7 @@
 use std::path::PathBuf;
 
 use criterion::{black_box, criterion_group, criterion_main, BatchSize, Criterion, SamplingMode};
-use polyops::{union, Geometry, MultiPolygon};
+use polyops::{intersection, union, Geometry, MultiPolygon};
 use serde_json::Value;
 
 /*
@@ -133,5 +133,26 @@ fn bench_union(c: &mut Criterion) {
     group.finish();
 }
 
-criterion_group!(benches, bench_union);
+/// The real process-photo clip-path-flatten workload, captured from
+/// `test39` (FE-1866, 3-level nested clip-path): a single `intersection`
+/// of a 5-vertex against a 95-vertex polygon. Tiny — see BENCHMARKS.md
+/// for why this matters (the napi boundary dominates at this size).
+fn bench_clip_path_flatten(c: &mut Criterion) {
+    let fixture = read_fixture("clip_path_flatten.json");
+    let step = &fixture["steps"][0];
+    let subject = coords_to_geometry(step["subject"].clone());
+    let clipping = coords_to_geometry(step["clipping"].clone());
+
+    let mut group = c.benchmark_group("clip_path_flatten");
+    group.bench_function("intersection", |b| {
+        b.iter_batched(
+            || (subject.clone(), clipping.clone()),
+            |(s, cl)| intersection(black_box(s), black_box(cl)),
+            BatchSize::SmallInput,
+        )
+    });
+    group.finish();
+}
+
+criterion_group!(benches, bench_union, bench_clip_path_flatten);
 criterion_main!(benches);
