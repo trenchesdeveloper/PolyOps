@@ -68,6 +68,8 @@ jobs:
         run: |
           npm ci
           npm run build
+          git diff --exit-code -- index.js index.d.ts \
+            || { echo "::error::index.js/index.d.ts are stale — run 'npm run build' in crates/polyops-napi and commit them"; exit 1; }
           npm test
           npm pack --dry-run
 
@@ -248,6 +250,10 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           set -euo pipefail
+          # The loader + types must be present, or --ignore-scripts would ship
+          # a main package with no index.js (exactly how 0.0.3 broke).
+          test -f index.js && test -f index.d.ts \
+            || { echo "::error::index.js/index.d.ts missing from checkout — refusing to publish a loader-less main package"; exit 1; }
           VERSION="$(node -p "require('./package.json').version")"
           if npm view "polyops@${VERSION}" version >/dev/null 2>&1; then
             echo "✓ polyops@${VERSION} already published — skipping"
@@ -276,8 +282,8 @@ jobs:
           TAG="${GITHUB_REF_NAME#v}"
           mkdir smoke && cd smoke
           npm init -y >/dev/null
-          for i in 1 2 3 4 5 6; do
+          for i in $(seq 1 10); do
             if npm install "polyops@$TAG"; then break; fi
-            echo "install failed (registry propagation?), retry $i…"; sleep 20
+            echo "install failed (registry propagation?), retry $i/10…"; sleep 30
           done
           node -e "let p; try { p = require('polyops'); } catch (e) { const m = String((e && e.message) || e); if (e && e.code === 'MODULE_NOT_FOUND' && /Cannot find module 'polyops-/.test(m)) { console.log('::warning::prebuilt for this platform not published yet — skipping load check: ' + m.split(String.fromCharCode(10))[0]); process.exit(0); } console.error('unexpected load failure:', e); process.exit(1); } const need = ['intersection','union','diff','xor']; const have = Object.keys(p); if (!need.every(f => have.includes(f))) { console.error('missing exports; got', have); process.exit(1); } const r = p.intersection([[[0,0],[2,0],[2,2],[0,2],[0,0]]],[[[1,1],[3,1],[3,3],[1,3],[1,1]]]); if (!r) { console.error('intersection returned null'); process.exit(1); } console.log('ok', JSON.stringify(have), JSON.stringify(r));"

@@ -10,8 +10,10 @@ Cargo.lock.bak
 # during a release build — only the metadata in those dirs is tracked.
 *.node
 *.wasm
-crates/polyops-napi/index.js
-crates/polyops-napi/index.d.ts
+# index.js / index.d.ts (the napi-rs JS loader + type defs) ARE committed:
+# the release publishes the main package with `npm publish --ignore-scripts`,
+# so these must exist in the checkout or the package ships without its loader
+# (which is exactly how 0.0.3 broke). A CI check keeps them in sync.
 # crates/polyops-napi/npm/ is intentionally tracked (per-platform
 # package.json metadata is committed; *.node inside it stays ignored).
 
