@@ -203,32 +203,44 @@ jobs:
         working-directory: crates/polyops-napi
         run: npx napi artifacts -d artifacts --dist npm
 
-      # Idempotent publish: skip any platform package already on npm (so a
-      # re-run after a partial failure — e.g. npm's spam filter rejecting one
-      # package mid-batch — completes the rest instead of choking on the ones
-      # that already published). optionalDependencies are computed from the
-      # npm/* dirs at the current version, not read from a committed block.
-      - name: Publish platform packages (idempotent) + inject optionalDependencies
+      # Idempotent + tolerant publish:
+      #  - skip any platform package already on npm (so a re-run completes the
+      #    rest instead of choking on already-published ones);
+      #  - tolerate an individual package failing to publish (e.g. npm's spam
+      #    filter blocking one new name) — record it, keep going, and still
+      #    publish the main package so the working platforms ship now. The
+      #    blocked platform fills in on a later run once it's unblocked, with
+      #    no version bump (main already lists it in optionalDependencies).
+      # optionalDependencies are computed from the npm/* dirs at the current
+      # version, always for all platforms (forward-compatible), not read from
+      # a committed block.
+      - name: Publish platform packages (idempotent, tolerant) + inject optionalDependencies
         working-directory: crates/polyops-napi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          set -euo pipefail
+          set -uo pipefail        # NOT -e: a single blocked package must not abort the release
           VERSION="$(node -p "require('./package.json').version")"
           DEPS='{}'
+          FAILED=()
           for dir in npm/*/; do
             name="$(node -p "require('./${dir}package.json').name")"
             if npm view "${name}@${VERSION}" version >/dev/null 2>&1; then
               echo "✓ ${name}@${VERSION} already published — skipping"
-            else
-              echo "→ publishing ${name}@${VERSION}"
-              npm publish "$dir" --access public
+            elif npm publish "$dir" --access public; then
+              echo "→ published ${name}@${VERSION}"
               sleep 5   # space out publishes to avoid npm's spam heuristic
+            else
+              echo "::warning::could not publish ${name}@${VERSION} — continuing; re-run once it's unblocked"
+              FAILED+=("${name}")
             fi
             DEPS="$(node -e "const d=${DEPS}; d['${name}']='${VERSION}'; console.log(JSON.stringify(d))")"
           done
           node -e "const fs=require('fs'); const p=require('./package.json'); p.optionalDependencies=${DEPS}; fs.writeFileSync('./package.json', JSON.stringify(p,null,2)+'\n')"
           echo 'main optionalDependencies set to:'; node -p "JSON.stringify(require('./package.json').optionalDependencies)"
+          if [ "${#FAILED[@]}" -gt 0 ]; then
+            echo "::warning::platform packages NOT published this run: ${FAILED[*]} — installs work on the others; those platforms fill in on a later run"
+          fi
 
       - name: Publish main package (idempotent)
         working-directory: crates/polyops-napi
@@ -268,4 +280,4 @@ jobs:
             if npm install "polyops@$TAG"; then break; fi
             echo "install failed (registry propagation?), retry $i…"; sleep 20
           done
-          node -e "const p=require('polyops'); const need=['intersection','union','diff','xor']; const have=Object.keys(p); if(!need.every(f=>have.includes(f))){console.error('missing exports; got',have);process.exit(1)} const r=p.intersection([[[0,0],[2,0],[2,2],[0,2],[0,0]]],[[[1,1],[3,1],[3,3],[1,3],[1,1]]]); if(!r){console.error('intersection returned null');process.exit(1)} console.log('ok',have,JSON.stringify(r));"
+          node -e "let p; try { p = require('polyops'); } catch (e) { const m = String((e && e.message) || e); if (e && e.code === 'MODULE_NOT_FOUND' && /Cannot find module 'polyops-/.test(m)) { console.log('::warning::prebuilt for this platform not published yet — skipping load check: ' + m.split(String.fromCharCode(10))[0]); process.exit(0); } console.error('unexpected load failure:', e); process.exit(1); } const need = ['intersection','union','diff','xor']; const have = Object.keys(p); if (!need.every(f => have.includes(f))) { console.error('missing exports; got', have); process.exit(1); } const r = p.intersection([[[0,0],[2,0],[2,2],[0,2],[0,0]]],[[[1,1],[3,1],[3,3],[1,3],[1,1]]]); if (!r) { console.error('intersection returned null'); process.exit(1); } console.log('ok', JSON.stringify(have), JSON.stringify(r));"
