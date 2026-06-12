@@ -27,6 +27,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # full history so we can check the tag is on main
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
@@ -36,6 +38,15 @@ jobs:
           node-version: 20
           cache: npm
           cache-dependency-path: crates/polyops-napi/package-lock.json
+
+      - name: Refuse to publish a tag that isn't on main
+        run: |
+          git fetch --no-tags --depth=2147483647 origin main
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
+            echo "::error::Tag $GITHUB_REF_NAME ($GITHUB_SHA) is not an ancestor of origin/main. Releases must be tagged on main — merge first, then tag the merged commit."
+            exit 1
+          fi
+          echo "✓ tagged commit $GITHUB_SHA is on main"
 
       - name: Tag version matches workspace + package.json
         run: |
@@ -185,17 +196,45 @@ jobs:
         working-directory: crates/polyops-napi
         run: npx napi artifacts -d artifacts --dist npm
 
-      - name: Publish platform packages + inject optionalDependencies
+      # Idempotent publish: skip any platform package already on npm (so a
+      # re-run after a partial failure — e.g. npm's spam filter rejecting one
+      # package mid-batch — completes the rest instead of choking on the ones
+      # that already published). optionalDependencies are computed from the
+      # npm/* dirs at the current version, not read from a committed block.
+      - name: Publish platform packages (idempotent) + inject optionalDependencies
         working-directory: crates/polyops-napi
-        run: npx napi prepublish -t npm --skip-gh-release
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          set -euo pipefail
+          VERSION="$(node -p "require('./package.json').version")"
+          DEPS='{}'
+          for dir in npm/*/; do
+            name="$(node -p "require('./${dir}package.json').name")"
+            if npm view "${name}@${VERSION}" version >/dev/null 2>&1; then
+              echo "✓ ${name}@${VERSION} already published — skipping"
+            else
+              echo "→ publishing ${name}@${VERSION}"
+              npm publish "$dir" --access public
+              sleep 5   # space out publishes to avoid npm's spam heuristic
+            fi
+            DEPS="$(node -e "const d=${DEPS}; d['${name}']='${VERSION}'; console.log(JSON.stringify(d))")"
+          done
+          node -e "const fs=require('fs'); const p=require('./package.json'); p.optionalDependencies=${DEPS}; fs.writeFileSync('./package.json', JSON.stringify(p,null,2)+'\n')"
+          echo 'main optionalDependencies set to:'; node -p "JSON.stringify(require('./package.json').optionalDependencies)"
 
-      - name: Publish main package
+      - name: Publish main package (idempotent)
         working-directory: crates/polyops-napi
-        run: npm publish --access public --ignore-scripts
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          set -euo pipefail
+          VERSION="$(node -p "require('./package.json').version")"
+          if npm view "polyops@${VERSION}" version >/dev/null 2>&1; then
+            echo "✓ polyops@${VERSION} already published — skipping"
+          else
+            npm publish --access public --ignore-scripts
+          fi
 
   # ------------------------------------------------------------------
   # Prove a fresh install resolves the right prebuilt and loads.
