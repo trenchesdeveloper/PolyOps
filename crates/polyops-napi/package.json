@@ -2,8 +2,8 @@
   "name": "polyops",
   "version": "0.0.4",
   "description": "Fast Martinez-Rueda polygon Boolean operations (intersection, union, difference, xor) for Node.js — Rust under the hood. Drop-in replacement for martinez-polygon-clipping.",
-  "main": "index.js",
-  "types": "index.d.ts",
+  "main": "polyops.js",
+  "types": "polyops.d.ts",
   "author": "Samuel Opeyemi <samuel@fasteditor.com>",
   "license": "MIT",
   "repository": {
@@ -60,6 +60,8 @@
     "node": ">= 18"
   },
   "files": [
+    "polyops.js",
+    "polyops.d.ts",
     "index.d.ts",
     "index.js",
     "flat.js",

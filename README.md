@@ -36,19 +36,20 @@ arrays, matching the upstream JS API.
 ## Performance
 
 `polyops` (Rust, single-thread) runs the upstream `union` benchmarks
-**~1.8×–2.9× faster** than `martinez-polygon-clipping@0.8.1`. From Node, the
-default binding wins on medium/large inputs, but N-API marshalling can erase
-it for tiny ops — so the **`polyops/flat`** entry point passes coordinates as
-typed-array buffers (same GeoJSON-shaped API) and is **faster than martinez at
-every size** (~1.9× on a small clip-path intersection, ~2–2.6× on large
-unions):
+**~1.8×–2.9× faster** than `martinez-polygon-clipping@0.8.1`. The Node binding
+routes coordinates through typed-array buffers **by default** (only flat data
+crosses the N-API boundary), so it's **faster than martinez at every size** —
+~1.9× on a small clip-path intersection, ~2–2.6× on large unions — with the
+same drop-in, GeoJSON-shaped API:
 
 ```js
-const polyops = require('polyops/flat'); // drop-in API, typed-array fast path
+const polyops = require('polyops'); // drop-in martinez-compatible API, fast by default
 polyops.union(subjectCoords, clippingCoords);
 ```
 
-Full numbers + methodology in [`BENCHMARKS.md`](BENCHMARKS.md).
+For pipelines that keep geometry in buffer form, `pack`/`unpack` and the raw
+`*Flat` ops are also exported (skip repacking across calls). Full numbers +
+methodology in [`BENCHMARKS.md`](BENCHMARKS.md).
 
 ## Layout
 
