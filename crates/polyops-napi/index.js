@@ -310,9 +310,13 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-const { intersection, union, diff, xor } = nativeBinding
+const { intersection, union, diff, xor, intersectionFlat, unionFlat, diffFlat, xorFlat } = nativeBinding
 
 module.exports.intersection = intersection
 module.exports.union = union
 module.exports.diff = diff
 module.exports.xor = xor
+module.exports.intersectionFlat = intersectionFlat
+module.exports.unionFlat = unionFlat
+module.exports.diffFlat = diffFlat
+module.exports.xorFlat = xorFlat
