@@ -11,3 +11,16 @@ export declare function union(subject: number[][][] | number[][][][], clipping: 
 export declare function diff(subject: number[][][] | number[][][][], clipping: number[][][] | number[][][][]): number[][][][] | null
 /** Symmetric difference of `subject` and `clipping`. */
 export declare function xor(subject: number[][][] | number[][][][], clipping: number[][][] | number[][][][]): number[][][][] | null
+export interface FlatPolys {
+  coords: Float64Array
+  ringLengths: Uint32Array
+  polyRingCounts: Uint32Array
+}
+/** Intersection over the flat/typed-array representation. */
+export declare function intersectionFlat(subject: FlatPolys, clipping: FlatPolys): FlatPolys | null
+/** Union over the flat/typed-array representation. */
+export declare function unionFlat(subject: FlatPolys, clipping: FlatPolys): FlatPolys | null
+/** `subject` minus `clipping` over the flat/typed-array representation. */
+export declare function diffFlat(subject: FlatPolys, clipping: FlatPolys): FlatPolys | null
+/** Symmetric difference over the flat/typed-array representation. */
+export declare function xorFlat(subject: FlatPolys, clipping: FlatPolys): FlatPolys | null

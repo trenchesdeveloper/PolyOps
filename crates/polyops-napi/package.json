@@ -61,7 +61,9 @@
   },
   "files": [
     "index.d.ts",
-    "index.js"
+    "index.js",
+    "flat.js",
+    "flat.d.ts"
   ],
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",

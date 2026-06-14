@@ -8,6 +8,7 @@
     "generate": "tsx generate-goldens.ts",
     "verify": "tsx verify-via-napi.ts",
     "bench": "tsx bench.ts",
+    "verify-flat": "tsx verify-flat.ts",
     "copy-bench-fixtures": "tsx copy-bench-fixtures.ts"
   },
   "dependencies": {
