@@ -81,13 +81,33 @@ engine itself is genuinely faster (1.8×–2.9× in pure Rust) — the gain is
 real, it's just (a) eaten by the napi boundary for small ops and (b) aimed
 at a phase that isn't the bottleneck here.
 
-## Optimization backlog (not yet done)
+## The fix: `polyops/flat` (typed-array path) — beats martinez at every size
 
-Ordered by expected impact for the napi consumer (PERFORMANCE_PLAN §7):
+The marshalling above is eliminated by passing coordinates as
+`Float64Array`/`Uint32Array` buffers instead of nested `number[][][]`, so
+only flat data crosses the N-API boundary. `polyops/flat` exposes this with
+the **same GeoJSON-shaped API** (it packs/unpacks in JS) plus raw buffer ops
+for flat-native pipelines. Verified against all **79 parity goldens**.
 
-1. **Cut N-API marshalling** — the dominant cost for the binding. Accept
-   `Float64Array`/typed arrays or a flat coordinate buffer instead of
-   nested `number[][][]`, to avoid the deep per-coordinate copy.
+| Scenario | martinez | polyops (nested) | **polyops/flat** |
+|----------|---------:|-----------------:|-----------------:|
+| `asia_union`        | 1.00× | 1.17× | **~2.0–2.6×** |
+| `clip_path_flatten` | 1.00× | 0.96× | **~1.9×** |
+
+Even counting the JS pack/unpack on every call (GeoJSON in/out), `flat`
+wins at both sizes; pre-packed (flat-native) it's a touch faster still and
+lands near the pure-Rust compute. This **flips the small-input regression
+into a win** — so the answer to "can polyops be a better martinez?" is now
+an unambiguous **yes, at every size.**
+
+(This doesn't change the process-photo conclusion above — that phase still
+isn't its bottleneck — but it removes the boundary tax for any consumer
+whose polygon work *does* matter.)
+
+## Optimization backlog
+
+1. ✅ **Cut N-API marshalling** — done via `polyops/flat` (typed-array
+   buffers; see above).
 2. Pre-size collections (`Vec::with_capacity`).
 3. `smallvec` for short-lived per-event arrays.
 4. `splay_tree` sweep status (only if profiling fingers it).
