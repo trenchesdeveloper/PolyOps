@@ -6,10 +6,13 @@
   "description": "Generates parity goldens by running martinez-polygon-clipping@0.8.1 against the upstream fixtures, into crates/polyops/tests/goldens/.",
   "scripts": {
     "generate": "tsx generate-goldens.ts",
-    "verify": "tsx verify-via-napi.ts"
+    "verify": "tsx verify-via-napi.ts",
+    "bench": "tsx bench.ts",
+    "copy-bench-fixtures": "tsx copy-bench-fixtures.ts"
   },
   "dependencies": {
-    "martinez-polygon-clipping": "0.8.1"
+    "martinez-polygon-clipping": "0.8.1",
+    "tinybench": "^6.0.2"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
