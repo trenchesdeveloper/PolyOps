@@ -28,3 +28,18 @@ export function intersectionFlat(subject: FlatPolys, clipping: FlatPolys): FlatP
 export function unionFlat(subject: FlatPolys, clipping: FlatPolys): FlatPolys | null;
 export function diffFlat(subject: FlatPolys, clipping: FlatPolys): FlatPolys | null;
 export function xorFlat(subject: FlatPolys, clipping: FlatPolys): FlatPolys | null;
+
+/** Default export: the same API as a single object (`import polyops from 'polyops'`). */
+declare const polyops: {
+	intersection: typeof intersection;
+	union: typeof union;
+	diff: typeof diff;
+	xor: typeof xor;
+	pack: typeof pack;
+	unpack: typeof unpack;
+	intersectionFlat: typeof intersectionFlat;
+	unionFlat: typeof unionFlat;
+	diffFlat: typeof diffFlat;
+	xorFlat: typeof xorFlat;
+};
+export default polyops;

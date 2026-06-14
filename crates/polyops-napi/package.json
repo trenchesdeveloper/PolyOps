@@ -1,9 +1,23 @@
 {
   "name": "polyops",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Fast Martinez-Rueda polygon Boolean operations (intersection, union, difference, xor) for Node.js — Rust under the hood. Drop-in replacement for martinez-polygon-clipping.",
   "main": "polyops.js",
+  "module": "polyops.mjs",
   "types": "polyops.d.ts",
+  "exports": {
+    ".": {
+      "types": "./polyops.d.ts",
+      "import": "./polyops.mjs",
+      "require": "./polyops.js"
+    },
+    "./flat": {
+      "types": "./flat.d.ts",
+      "import": "./flat.mjs",
+      "require": "./flat.js"
+    },
+    "./package.json": "./package.json"
+  },
   "author": "Samuel Opeyemi <samuel@fasteditor.com>",
   "license": "MIT",
   "repository": {
@@ -61,11 +75,14 @@
   },
   "files": [
     "polyops.js",
+    "polyops.mjs",
     "polyops.d.ts",
     "index.d.ts",
     "index.js",
     "flat.js",
-    "flat.d.ts"
+    "flat.mjs",
+    "flat.d.ts",
+    "README.md"
   ],
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",

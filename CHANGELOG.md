@@ -4,7 +4,22 @@ Notable changes to `polyops` (crates.io) and `polyops` (npm). Versions move
 in lockstep across both registries. Loosely follows
 [Keep a Changelog](https://keepachangelog.com/).
 
-## [0.0.5] — unreleased
+## [0.0.6] — unreleased
+
+### Added
+- **Proper ESM support (dual CJS/ESM package).** An `exports` map plus ESM
+  wrappers (`polyops.mjs`, `flat.mjs`) so `import { union } from 'polyops'`
+  (named), `import polyops from 'polyops'` (default), and the `polyops/flat`
+  subpath all work from ESM — matching the type declarations. CommonJS
+  `require('polyops')` is unchanged.
+- npm package README (`crates/polyops-napi/README.md`) — fixes the
+  "no README" notice on npmjs.com.
+
+### Notes
+- Non-breaking, additive. Default/named/subpath imports verified in both
+  ESM and CJS against an installed tarball.
+
+## [0.0.5] — 2026-06-14
 
 ### Added
 - **Typed-array fast path, on by default.** `intersection`/`union`/`diff`/`xor`
