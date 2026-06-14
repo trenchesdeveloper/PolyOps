@@ -1,6 +1,7 @@
 /**
- * Tests for the typed-array fast path (flat.js): it exposes the expected
- * surface and produces the same results as the default (nested) export.
+ * Tests for the default entry (polyops.js): it exposes the expected
+ * surface and its GeoJSON ops (now routed through the typed-array fast
+ * path) produce the same results as the unwrapped native binding.
  *
  * Run with: `node --test __test__`
  */
@@ -9,7 +10,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 const loadFlat = async () => {
-	const m = await import('../flat.js');
+	const m = await import('../polyops.js');
 	return m.default ?? m;
 };
 
