@@ -181,6 +181,9 @@ jobs:
     name: publish-npm
     needs: build-npm-artifacts
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write          # mint the OIDC token npm uses for provenance
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -229,7 +232,7 @@ jobs:
             name="$(node -p "require('./${dir}package.json').name")"
             if npm view "${name}@${VERSION}" version >/dev/null 2>&1; then
               echo "✓ ${name}@${VERSION} already published — skipping"
-            elif npm publish "$dir" --access public; then
+            elif npm publish "$dir" --access public --provenance; then
               echo "→ published ${name}@${VERSION}"
               sleep 5   # space out publishes to avoid npm's spam heuristic
             else
@@ -258,7 +261,7 @@ jobs:
           if npm view "polyops@${VERSION}" version >/dev/null 2>&1; then
             echo "✓ polyops@${VERSION} already published — skipping"
           else
-            npm publish --access public --ignore-scripts
+            npm publish --access public --ignore-scripts --provenance
           fi
 
   # ------------------------------------------------------------------
