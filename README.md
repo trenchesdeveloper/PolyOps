@@ -51,6 +51,29 @@ For pipelines that keep geometry in buffer form, `pack`/`unpack` and the raw
 `*Flat` ops are also exported (skip repacking across calls). Full numbers +
 methodology in [`BENCHMARKS.md`](BENCHMARKS.md).
 
+## Comparison & when to use
+
+PolyOps is a drop-in, faster replacement for `martinez-polygon-clipping` —
+same GeoJSON-shaped API, same results (verified to parity), Rust under the hood:
+
+| | **PolyOps** | martinez-polygon-clipping |
+|---|---|---|
+| Engine | Rust (native + crates.io) | pure JavaScript |
+| Speed (union benchmarks) | **1.8–2.9× (Rust), 1.9–2.6× (Node)** | 1× (baseline) |
+| API | drop-in (identical shape) | — |
+| Output parity | matches `0.8.1` exactly | — |
+| Modules | ESM + CommonJS | CommonJS |
+| Prebuilt platforms | macOS, Linux gnu+musl, Windows | n/a |
+
+**Use PolyOps when** you want `martinez-polygon-clipping` behavior but faster
+(Node *or* Rust), with prebuilt native binaries and a maintained codebase, on
+substantive polygon workloads (clip paths, GIS, vector geometry).
+
+**Other polygon-Boolean libraries** (different algorithms / trade-offs):
+`martinez-polygon-clipping` (the pure-JS reference PolyOps ports),
+`polygon-clipping` and `polybooljs` (other pure-JS libraries), and
+`clipper2` / `i_overlay` (fast native/Rust, but *not* Martinez-compatible).
+
 ## Layout
 
 ```

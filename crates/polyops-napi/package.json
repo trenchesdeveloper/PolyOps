@@ -1,7 +1,7 @@
 {
   "name": "polyops",
   "version": "0.0.6",
-  "description": "Fast Martinez-Rueda polygon Boolean operations (intersection, union, difference, xor) for Node.js — Rust under the hood. Drop-in replacement for martinez-polygon-clipping.",
+  "description": "Fast polygon clipping & Boolean operations (intersection, union, difference, xor) for Node.js — Rust (Martinez–Rueda) under the hood, with prebuilt binaries. Drop-in replacement for martinez-polygon-clipping.",
   "main": "polyops.js",
   "module": "polyops.mjs",
   "types": "polyops.d.ts",
@@ -32,15 +32,24 @@
   "keywords": [
     "polygon",
     "clipping",
+    "polygon-clipping",
     "boolean",
+    "boolean-operations",
     "intersection",
     "union",
+    "difference",
     "xor",
     "geometry",
-    "martinez",
+    "computational-geometry",
     "geojson",
+    "gis",
+    "spatial",
+    "martinez",
+    "martinez-polygon-clipping",
+    "clipper",
     "napi-rs",
-    "native"
+    "native",
+    "rust"
   ],
   "napi": {
     "name": "polyops",
