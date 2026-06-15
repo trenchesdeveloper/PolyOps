@@ -4,7 +4,17 @@ Notable changes to `polyops` (crates.io) and `polyops` (npm). Versions move
 in lockstep across both registries. Loosely follows
 [Keep a Changelog](https://keepachangelog.com/).
 
-## [0.0.6] — unreleased
+## [0.0.7] — unreleased
+
+### Changed
+- **Discoverability / docs only — no code change.** Expanded npm keywords
+  (11 → 20) and tuned the crates.io keywords; tightened the package
+  descriptions; added a `vs martinez-polygon-clipping` comparison table, a
+  "when to use", and an "other libraries" section to both READMEs. Republished
+  so the updated keywords + README reach the registries.
+- Added `ROADMAP.md` (post-0.0.6 plan).
+
+## [0.0.6] — 2026-06-15
 
 ### Added
 - **Proper ESM support (dual CJS/ESM package).** An `exports` map plus ESM
