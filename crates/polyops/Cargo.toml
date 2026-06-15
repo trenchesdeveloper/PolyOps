@@ -1,6 +1,6 @@
 [package]
 name = "polyops"
-description = "Martinez-Rueda polygon clipping algorithm: Boolean operations (intersection, union, difference, xor) over polygons and multipolygons. Rust port of martinez-polygon-clipping."
+description = "Fast Martinez-Rueda polygon clipping: Boolean operations (intersection, union, difference, xor) on polygons and multipolygons over GeoJSON-shaped coordinates. Pure-Rust port of martinez-polygon-clipping."
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -9,7 +9,7 @@ authors.workspace = true
 repository.workspace = true
 homepage.workspace = true
 readme = "../../README.md"
-keywords = ["polygon", "clipping", "boolean", "geometry", "martinez"]
+keywords = ["polygon", "clipping", "boolean", "geojson", "martinez"]
 categories = ["algorithms", "graphics", "science::geo"]
 
 [dependencies]

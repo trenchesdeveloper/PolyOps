@@ -86,6 +86,34 @@ On the upstream `union` benchmarks, polyops runs **~1.8–2.9× faster** than
 > native binding (the N-API call cost dominates trivial work). polyops wins
 > on substantive polygon workloads.
 
+## polyops vs `martinez-polygon-clipping`
+
+A drop-in, faster replacement — same GeoJSON-shaped API, same results
+(verified to parity), Rust under the hood:
+
+| | **polyops** | martinez-polygon-clipping |
+|---|---|---|
+| Engine | Rust (native, prebuilt) | pure JavaScript |
+| Speed (union benchmarks) | **1.8–2.9× (Rust), 1.9–2.6× (Node)** | 1× (baseline) |
+| API | drop-in (identical shape) | — |
+| Output parity | matches `0.8.1` exactly | — |
+| Modules | ESM + CommonJS | CommonJS |
+| Prebuilt platforms | macOS, Linux gnu+musl, Windows | n/a |
+
+### When to use polyops
+
+- You already use `martinez-polygon-clipping` and want it **faster, same API**.
+- You want maintained polygon Boolean ops with **prebuilt binaries** (no build toolchain).
+- You process **substantive** polygons (clip paths, GIS, vector geometry).
+
+### Other polygon-Boolean libraries
+
+Different algorithms / trade-offs — pick by need:
+
+- **`martinez-polygon-clipping`** — the pure-JS reference polyops ports; use it if you can't ship a native addon.
+- **`polygon-clipping`**, **`polybooljs`** — other pure-JS Boolean-operation libraries.
+- **`clipper2`**, **`i_overlay`** — fast native/Rust libraries using *different* algorithms (not Martinez-compatible).
+
 ## Correctness
 
 Verified against the full `martinez-polygon-clipping@0.8.1` fixture corpus
