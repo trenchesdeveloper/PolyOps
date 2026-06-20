@@ -4,7 +4,17 @@ Notable changes to `polyops` (crates.io) and `polyops` (npm). Versions move
 in lockstep across both registries. Loosely follows
 [Keep a Changelog](https://keepachangelog.com/).
 
-## [0.0.7] — unreleased
+## [Unreleased]
+
+### Added
+- **Public `Operation` enum** at the crate root (`polyops::Operation`) — was
+  previously only reachable via `polyops::operation::Operation`.
+- **Optional `serde` feature** (off by default) deriving `Serialize` /
+  `Deserialize` on `Geometry` and `Operation`, so Rust consumers can
+  (de)serialize the public types without going through `polyops-napi`. The
+  core stays serde-free by default.
+
+## [0.0.7] — 2026-06-15
 
 ### Changed
 - **Discoverability / docs only — no code change.** Expanded npm keywords

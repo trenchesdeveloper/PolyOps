@@ -20,6 +20,7 @@ pub type BBox = [f64; 4];
 /// upstream `Geometry = Polygon | MultiPolygon` union by discriminating
 /// explicitly at the Rust API boundary.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum Geometry {
     /// A single polygon (exterior + optional holes).
     Polygon(Polygon),
