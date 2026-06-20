@@ -53,7 +53,7 @@ mod sweep_line;
 use crate::connect_edges::connect_edges;
 use crate::event_queue::EventQueue;
 use crate::fill_queue::fill_queue;
-use crate::operation::Operation;
+pub use crate::operation::Operation;
 use crate::subdivide_segments::subdivide_segments;
 use crate::sweep_event::SweepEvent;
 pub use crate::types::{BBox, Geometry, MultiPolygon, Polygon, Position, Ring};

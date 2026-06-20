@@ -12,8 +12,14 @@ readme = "../../README.md"
 keywords = ["polygon", "clipping", "boolean", "geojson", "martinez"]
 categories = ["algorithms", "graphics", "science::geo"]
 
+[features]
+# Optional: derive serde `Serialize`/`Deserialize` on the public types
+# (`Geometry`, `Operation`). Off by default — the core stays serde-free.
+serde = ["dep:serde"]
+
 [dependencies]
 robust = { workspace = true }
+serde = { workspace = true, optional = true }
 
 [dev-dependencies]
 serde = { workspace = true }

@@ -2,6 +2,7 @@
 
 /// Which Boolean operation to perform.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum Operation {
     /// `subject ∩ clipping`
     Intersection = 0,
