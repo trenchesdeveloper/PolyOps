@@ -13,6 +13,10 @@ in lockstep across both registries. Loosely follows
   `Deserialize` on `Geometry` and `Operation`, so Rust consumers can
   (de)serialize the public types without going through `polyops-napi`. The
   core stays serde-free by default.
+- **Optional `geo-types` feature** (off by default) — `From<geo_types::Polygon
+  / MultiPolygon> for Geometry` (input) and a `ToGeo` extension trait
+  (`.to_geo()`) on `Geometry`/`MultiPolygon` (output), for interop with the
+  Rust geo ecosystem.
 
 ## [0.0.7] — 2026-06-15
 

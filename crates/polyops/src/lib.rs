@@ -50,6 +50,9 @@ mod subdivide_segments;
 mod sweep_event;
 mod sweep_line;
 
+#[cfg(feature = "geo-types")]
+mod geo_compat;
+
 use crate::connect_edges::connect_edges;
 use crate::event_queue::EventQueue;
 use crate::fill_queue::fill_queue;
@@ -57,6 +60,11 @@ pub use crate::operation::Operation;
 use crate::subdivide_segments::subdivide_segments;
 use crate::sweep_event::SweepEvent;
 pub use crate::types::{BBox, Geometry, MultiPolygon, Polygon, Position, Ring};
+
+/// `geo-types` interop (feature `geo-types`): the [`ToGeo`] output trait.
+/// The `From<geo_types::…>` input impls live in `geo_compat`.
+#[cfg(feature = "geo-types")]
+pub use crate::geo_compat::ToGeo;
 
 /*
  * Public API — matches the four entrypoints exposed by upstream
