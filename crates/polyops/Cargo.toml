@@ -16,10 +16,14 @@ categories = ["algorithms", "graphics", "science::geo"]
 # Optional: derive serde `Serialize`/`Deserialize` on the public types
 # (`Geometry`, `Operation`). Off by default — the core stays serde-free.
 serde = ["dep:serde"]
+# Optional: `From`/`Into` conversions between `Geometry` and the `geo-types`
+# crate, for interop with the Rust geo ecosystem. Off by default.
+geo-types = ["dep:geo-types"]
 
 [dependencies]
 robust = { workspace = true }
 serde = { workspace = true, optional = true }
+geo-types = { version = "0.7", optional = true }
 
 [dev-dependencies]
 serde = { workspace = true }
