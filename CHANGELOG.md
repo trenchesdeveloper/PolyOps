@@ -6,6 +6,12 @@ in lockstep across both registries. Loosely follows
 
 ## [Unreleased]
 
+## [0.1.0] — 2026-06-21
+
+First minor release. The public Rust API is now stable and ecosystem-friendly:
+crate-root `Operation`, optional `serde` and `geo-types` interop, and full
+docs.rs documentation. npm and crates.io continue to move in lockstep.
+
 ### Added
 - **Public `Operation` enum** at the crate root (`polyops::Operation`) — was
   previously only reachable via `polyops::operation::Operation`.
