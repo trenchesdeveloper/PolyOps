@@ -438,7 +438,7 @@ dependencies = [
 
 [[package]]
 name = "polyops"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "criterion",
  "geo-types",
@@ -449,7 +449,7 @@ dependencies = [
 
 [[package]]
 name = "polyops-napi"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "napi",
  "napi-build",

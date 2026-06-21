@@ -6,6 +6,14 @@ in lockstep across both registries. Loosely follows
 
 ## [Unreleased]
 
+## [0.1.1] — 2026-06-21
+
+No functional change to either package — release-infrastructure only. npm
+packages are now published via **OIDC trusted publishing** (tokenless) instead
+of an automation token, so npm attributes the publisher as "GitHub Actions" and
+continues to attach build provenance. The crate is identical to `0.1.0`; the
+bump just keeps npm and crates.io in lockstep.
+
 ## [0.1.0] — 2026-06-21
 
 First minor release. The public Rust API is now stable and ecosystem-friendly:
