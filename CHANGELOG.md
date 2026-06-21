@@ -14,6 +14,11 @@ in lockstep across both registries. Loosely follows
   (de)serialize the public types without going through `polyops-napi`. The
   core stays serde-free by default.
 
+### Documentation
+- rustdoc with runnable examples on the crate and the four operations;
+  docs.rs configured to build with all features (so optional-feature items
+  render). Retired the stale "pre-alpha" status note.
+
 ## [0.0.7] — 2026-06-15
 
 ### Changed
