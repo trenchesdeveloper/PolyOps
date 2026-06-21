@@ -1,6 +1,6 @@
 {
   "name": "polyops",
-  "version": "0.0.7",
+  "version": "0.1.0",
   "description": "Fast polygon clipping & Boolean operations (intersection, union, difference, xor) for Node.js — Rust (Martinez–Rueda) under the hood, with prebuilt binaries. Drop-in replacement for martinez-polygon-clipping.",
   "main": "polyops.js",
   "module": "polyops.mjs",
