@@ -183,7 +183,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write          # mint the OIDC token npm uses for provenance
+      id-token: write          # OIDC token: authenticates the publish (trusted publishing) + signs provenance
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v6
@@ -192,6 +192,11 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
           cache: npm
           cache-dependency-path: crates/polyops-napi/package-lock.json
+
+      # Trusted publishing (OIDC) needs npm >= 11.5.1; Node 24's bundled npm
+      # can be older, so pin to latest before any publish.
+      - name: Use npm >= 11.5.1 (OIDC trusted publishing)
+        run: npm install -g npm@latest
 
       - name: npm ci
         working-directory: crates/polyops-napi
@@ -221,8 +226,6 @@ jobs:
       # a committed block.
       - name: Publish platform packages (idempotent, tolerant) + inject optionalDependencies
         working-directory: crates/polyops-napi
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           set -uo pipefail        # NOT -e: a single blocked package must not abort the release
           VERSION="$(node -p "require('./package.json').version")"
@@ -249,8 +252,6 @@ jobs:
 
       - name: Publish main package (idempotent)
         working-directory: crates/polyops-napi
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           set -euo pipefail
           # The loader + types must be present, or --ignore-scripts would ship
