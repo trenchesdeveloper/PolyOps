@@ -12,6 +12,12 @@ readme = "../../README.md"
 keywords = ["polygon", "clipping", "boolean", "geojson", "martinez"]
 categories = ["algorithms", "graphics", "science::geo"]
 
+# Build docs.rs with all features so optional-feature items (serde, geo-types)
+# render, with "Available on feature X" badges (via doc_auto_cfg + the docsrs cfg).
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
 [features]
 # Optional: derive serde `Serialize`/`Deserialize` on the public types
 # (`Geometry`, `Operation`). Off by default — the core stays serde-free.
